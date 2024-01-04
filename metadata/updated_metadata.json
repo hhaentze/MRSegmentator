@@ -1,0 +1,104 @@
+{
+    "schema": "https://github.com/Project-MONAI/MONAI-extra-test-data/releases/download/0.8.1/meta_schema_20220324.json",
+    "version": "1.0.0",
+    "changelog": {
+        "0.0.1": "initialize the model package structure"
+    },
+    "monai_version": "1.1.0",
+    "pytorch_version": "1.12.0",
+    "numpy_version": "1.22.3",
+    "optional_packages_version": {
+        "fire": "0.4.0",
+        "pytorch-ignite": "0.4.10",
+        "nibabel": "4.0.10"
+    },
+    "task": "Organ Segmentation on MR images",
+    "description": "Clone of Totalsegmentator Mini for MR segmentation",
+    "authors": "Hartmut Häntze",
+    "copyright": "Copyright (c) Hartmut Häntze",
+    "network_data_format": {
+        "inputs": {
+            "image": {
+                "type": "image",
+                "format": "Density",
+                "modality": "MR",
+                "num_channels": 1,
+                "spatial_shape": [
+                    64,
+                    64,
+                    64
+                ],
+                "dtype": "float32",
+                "value_range": [
+                    0,
+                    1
+                ],
+                "is_patch_data": true,
+                "channel_def": {
+                    "0": "image"
+                }
+            }
+        },
+        "outputs": {
+            "pred": {
+                "type": "image",
+                "format": "segmentation",
+                "num_channels": 21,
+                "spatial_shape": [
+                    64,
+                    64,
+                    64
+                ],
+                "dtype": "float32",
+                "value_range": [
+                    0,
+                    1
+                ],
+                "is_patch_data": true,
+                "channel_def": {
+                    "0": "background",
+                    "1": "spleen",
+                    "2": "right_kidney",
+                    "3": "left_kidney",
+                    "4": "gallbladder",
+                    "5": "liver",
+                    "6": "stomach",
+                    "7": "pancreas",
+                    "8": "right_adrenal_gland",
+                    "9": "left_adrenal_gland",
+                    "10": "left_lung",
+                    "11": "right_lung",
+                    "12": "heart",
+                    "13": "aorta",
+                    "14": "inferior_vena_cava",
+                    "15": "portal_vein_and_splenic_vein",
+                    "16": "left_iliac_artery",
+                    "17": "right_iliac_artery",
+                    "18": "left_iliac_vena",
+                    "19": "right_iliac_vena",
+                    "20": "esophagus",
+                    "21": "small_bowel",
+                    "22": "duodenum",
+                    "23": "colon",
+                    "24": "urinary_bladder",
+                    "25": "spine",
+                    "26": "sacrum",
+                    "27": "left_hip",
+                    "28": "right_hip",
+                    "29": "left_femur",
+                    "30": "right_femur",
+                    "31": "left_autochthonous_muscle",
+                    "32": "right_autochthonous_muscle",
+                    "33": "left_iliopsoas_muscle",
+                    "34": "right_iliopsoas_muscle",
+                    "35": "left_gluteus_maximus",
+                    "36": "right_gluteus_maximus",
+                    "37": "left_gluteus_medius",
+                    "38": "right_gluteus_medius",
+                    "39": "left_gluteus_minimus",
+                    "40": "right_gluteus_minimus"
+                }
+            }
+        }
+    }
+}
