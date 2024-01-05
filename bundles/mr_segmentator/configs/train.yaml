@@ -10,16 +10,16 @@ output_dir: "$@bundle_root + 'output'"
 ckpt_dir: "$@bundle_root + 'ckpts'"
 ckpt_path: "models/model.pt"
 dataset_dir: "$config.ukbb"
-train_df: "$pd.read_csv(@dataset_dir + 'train_w_only.csv')[['image','label']]"
-valid_df: "$pd.read_csv(@dataset_dir + 'valid_w_only.csv')[['image','label']]"
-train_data_dict: "$utils.get_datalist(@train_df, config.ukbb + 'nifti/', config.ukbb + 'preds_combined/')"
-valid_data_dict: "$utils.get_datalist(@valid_df, config.ukbb + 'nifti/', config.ukbb + 'preds_combined/')"
+train_df: "$pd.read_csv(@dataset_dir + 'train.csv')[['image','label']]"
+valid_df: "$pd.read_csv(@dataset_dir + 'valid.csv')[['image','label']]"
+train_data_dict: "$utils.get_datalist(@train_df, config.ukbb + 'nifti/', config.ukbb + 'preds_combined2/')"
+valid_data_dict: "$utils.get_datalist(@valid_df, config.ukbb + 'nifti/', config.ukbb + 'preds_combined2/')"
 image_key: image
 label_key: label
 lazy_resample: false
 device: "$torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')"
 num_workers: 12
-epochs: 200
+epochs: 100
 batch_size: 12 
 network: "$@network_def.to(@device)"
 loss:
@@ -194,10 +194,10 @@ train:
       - false
       to_onehot: "@output_channels"
   handlers:
-  # - _target_: CheckpointLoader
-  #   load_path: "$@bundle_root + @ckpt_path"
-  #   load_dict:
-  #     network: "@network"
+  - _target_: CheckpointLoader
+    load_path: "$@bundle_root + @ckpt_path"
+    load_dict:
+      network: "@network"
   - _target_: LrScheduleHandler
     lr_scheduler: "@lr_scheduler"
     print_lr: true

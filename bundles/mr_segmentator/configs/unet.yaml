@@ -1,4 +1,4 @@
-bundle_root: "$config.home + 'ukbb/bundles/mr_segmentator/'"
+bundle_root: "$config.home + 'mr_segmentator/bundles/mr_segmentator/'"
 cache_dir: "/sc-scratch/sc-scratch-cc06-ag-ki-radiologie/ukbb/mr_segmentator"
 network_def:
   _target_: monai.networks.nets.UNet
