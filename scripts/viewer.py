@@ -157,12 +157,8 @@ class BasicViewer:
             print("Out of image borders")
             return
         fig, ax = plt.subplots(1, 1, figsize=self.figsize)
-        get_slice = (
-            lambda x, view, pos: x[pos, :, :]
-            if view == 0
-            else x[:, pos, :]
-            if view == 1
-            else x[:, :, pos]
+        get_slice = lambda x, view, pos: (
+            x[pos, :, :] if view == 0 else x[:, pos, :] if view == 1 else x[:, :, pos]
         )
 
         if self.mode == "RGB" and self.x.shape[0] == 4:
@@ -223,9 +219,11 @@ class BasicViewer:
             slider_min=self.x.min(),
             slider_max=self.x.max(),
             value=[self.x.min(), self.x.max()],
-            slider_type="FloatRangeSlider"
-            if issubclass(self.x.dtype.type, np.floating)
-            else "IntRangeSlider",
+            slider_type=(
+                "FloatRangeSlider"
+                if issubclass(self.x.dtype.type, np.floating)
+                else "IntRangeSlider"
+            ),
             step=0.01 if issubclass(self.x.dtype.type, np.floating) else 1,
             readout=True,
         )
@@ -360,9 +358,11 @@ class DicomExplorer(BasicViewer):
             slider_max=self.x.max(),
             value=[self.x.min(), self.x.max()],
             continuous_update=False,
-            slider_type="FloatRangeSlider"
-            if issubclass(self.x.dtype.type, np.floating)
-            else "IntRangeSlider",
+            slider_type=(
+                "FloatRangeSlider"
+                if issubclass(self.x.dtype.type, np.floating)
+                else "IntRangeSlider"
+            ),
             step=0.01 if issubclass(self.x.dtype.type, np.floating) else 1,
         )
 
