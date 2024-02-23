@@ -64,9 +64,7 @@ def read_images(namespace):
         ), f"no images with file ending .nii or .nii.gz in direcotry {namespace.input}"
     else:
         images = [namespace.input]
-        assert condition(
-            images[0]
-        ), f"file ending of {namespace.input} neither .nii nor .nii.gz"
+        assert condition(images[0]), f"file ending of {namespace.input} neither .nii nor .nii.gz"
 
     return images
 
