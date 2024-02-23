@@ -1,0 +1,54 @@
+import argparse
+import os
+
+
+def initialize():
+    name = "MRSegmentator"
+    desc = "Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences"
+    epilog = "Charité AG KI - 2024"
+
+    parser = argparse.ArgumentParser(prog=name, description=desc, epilog=epilog)
+
+    parser.add_argument("--modeldir", type=str, required=True, help="model directory")
+    parser.add_argument("--outdir", type=str, required=True, help="output directory")
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=True,
+        help="input image or directory with nifti images",
+    )
+    parser.add_argument(
+        "--fold",
+        type=int,
+        choices=range(5),
+        help="choose a model based on the validation folds",
+    )
+    parser.add_argument(
+        "--crossval", action="store_true", help="run each model individually"
+    )
+
+    parser.add_argument(
+        "--force_LPS",
+        action="store_true",
+        help="change image orientation to LPS. Segmentations will be stored on the images' original orientation. (requires more memory)",  # noqa: E501
+    )
+    parser.add_argument("--postfix", type=str, default="seg", help="postfix")
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
+
+    args = parser.parse_args()
+    return args
+
+
+def assert_namespace(namespace):
+    # requirements
+    assert os.path.isdir(
+        namespace.modeldir
+    ), f"Model directory {namespace.modeldir} not found"
+    assert os.path.isdir(
+        namespace.outdir
+    ), f"Output directory {namespace.outdir} not found"
+    assert os.path.isfile(namespace.input) or os.path.isdir(
+        namespace.input
+    ), f"Input {namespace.input} not found"
