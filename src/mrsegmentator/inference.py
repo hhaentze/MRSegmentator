@@ -80,9 +80,7 @@ def infer(
         # load batch of images
         chunk_size = 4
         for img_chunk in divide_chunks(images, chunk_size):
-            np_chunk = [
-                SimpleITKIO().read_images([f], force_LPS=True) for f in img_chunk
-            ]
+            np_chunk = [SimpleITKIO().read_images([f], force_LPS=True) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 

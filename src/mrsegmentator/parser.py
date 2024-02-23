@@ -38,9 +38,7 @@ def initialize():
         choices=range(5),
         help="choose a model based on the validation folds",
     )
-    parser.add_argument(
-        "--crossval", action="store_true", help="run each model individually"
-    )
+    parser.add_argument("--crossval", action="store_true", help="run each model individually")
 
     parser.add_argument(
         "--force_LPS",
@@ -57,12 +55,8 @@ def initialize():
 
 def assert_namespace(namespace):
     # requirements
-    assert os.path.isdir(
-        namespace.modeldir
-    ), f"Model directory {namespace.modeldir} not found"
-    assert os.path.isdir(
-        namespace.outdir
-    ), f"Output directory {namespace.outdir} not found"
+    assert os.path.isdir(namespace.modeldir), f"Model directory {namespace.modeldir} not found"
+    assert os.path.isdir(namespace.outdir), f"Output directory {namespace.outdir} not found"
     assert os.path.isfile(namespace.input) or os.path.isdir(
         namespace.input
     ), f"Input {namespace.input} not found"
