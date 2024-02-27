@@ -45,6 +45,24 @@ def initialize():
         action="store_true",
         help="if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime",  # noqa: E501
     )
+    parser.add_argument(
+        "--batchsize",
+        type=int,
+        default=8,
+        help="how many images can be loaded to memory at the same time, ideally this should equal the dataset size",
+    )
+    parser.add_argument(
+        "--nproc",
+        type=int,
+        default=3,
+        help="number of processes",
+    )
+    parser.add_argument(
+        "--nproc_export",
+        type=int,
+        default=8,
+        help="number of processes for exporting the segmentations",
+    )
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
@@ -60,3 +78,6 @@ def assert_namespace(namespace):
     assert os.path.isfile(namespace.input) or os.path.isdir(
         namespace.input
     ), f"Input {namespace.input} not found"
+    assert namespace.batchsize >= 1, "batchsize must be greater than 1"
+    assert namespace.nproc >= 1, "number of processes must be greater than 1"
+    assert namespace.nproc_export >= 1, "number of processes must be greater than 1"

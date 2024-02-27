@@ -25,9 +25,11 @@ class SimpleITKIO:
         self,
         image_fname: str,
         is_LPS: bool = False,
+        verbose: bool = False,
     ) -> Tuple[np.ndarray, dict]:
 
-        print("DEBUG", f"read {image_fname}")
+        if verbose:
+            print(f"Read {image_fname}")
 
         # read image and save meta data
         itk_image = sitk.ReadImage(image_fname)
@@ -72,11 +74,15 @@ class SimpleITKIO:
         output_fname: str,
         properties: dict,
         is_LPS: bool = False,
+        verbose: bool = False,
     ) -> None:
-        print("DEBUG", "write {output_fname}")
+
         assert (
             seg.ndim == 3
         ), "segmentation must be 3d. If you are exporting a 2d segmentation, please provide it as shape 1,x,y"
+        if verbose:
+            print(f"Write {output_fname}")
+
         output_dimension = len(properties["sitk_stuff"]["spacing"])
         assert 1 < output_dimension < 4
         if output_dimension == 2:

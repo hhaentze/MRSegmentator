@@ -49,6 +49,9 @@ def crossval(namespace, images):
             namespace.is_LPS,
             namespace.verbose,
             namespace.cpu_only,
+            namespace.batchsize,
+            namespace.nproc,
+            namespace.nproc_export,
         )
 
 
@@ -106,6 +109,9 @@ def main():
         namespace.is_LPS,
         namespace.verbose,
         namespace.cpu_only,
+        namespace.batchsize,
+        namespace.nproc,
+        namespace.nproc_export,
     )
 
 

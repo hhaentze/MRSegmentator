@@ -57,6 +57,9 @@ Options:
 --postfix <str> # postfix that will be added to segmentations. Default: "seg"
 --cpu_only # don't use a gpu
 --verbose
+--batchsize # how many images can be loaded to memory at the same time, ideally this should equal the dataset size
+--nproc # number of processes
+--nproc_export # number of processes for exporting the segmentations
 ```
 
 <!-- |option|required|description|
