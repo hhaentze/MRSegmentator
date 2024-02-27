@@ -22,6 +22,14 @@ conda  install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda
 # Install MRSegmentator
 python -m pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple mrsegmentator
 
+# Inference
+mrsegmentator  \
+--modeldir "/sc-projects/sc-proj-cc06-ag-ki-radiologie/Niere/ukbb/ckpts/mr_segmentator_weights/" \
+--input <nifti file or directory> \
+--outdir <directory> \
+--force_LPS \
+--fold 0 
+
 # Download Weights (TODO) (Currently the weights are stored on the cluster)
 # wget https://www.url-placeholder.de/weights.zip
 # unzip weights.zip
@@ -45,7 +53,7 @@ Options:
 --fold <int> # use only a single model for inference 
 --crossval # Run all 5 models individually. Useful to analyse differences between the models.
 
---force_LPS # change image orientation to LPS. The orientation of segmentations will be changed back to its original configuration after the inference step 
+--is_LPS # if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime
 --postfix <str> # postfix that will be added to segmentations. Default: "seg"
 --cpu_only # don't use a gpu
 --verbose

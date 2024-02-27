@@ -24,7 +24,7 @@ class SimpleITKIO(BaseReaderWriter):
     supported_file_endings = []
 
     def read_images(
-        self, image_fnames: Union[List[str], Tuple[str, ...]], force_LPS: bool = False
+        self, image_fnames: Union[List[str], Tuple[str, ...]], is_LPS: bool = False, 
     ) -> Tuple[np.ndarray, dict]:
         images = []
         spacings = []
@@ -39,12 +39,12 @@ class SimpleITKIO(BaseReaderWriter):
             origins.append(itk_image.GetOrigin())
             directions.append(itk_image.GetDirection())
 
-            if force_LPS:
+            if is_LPS:
+                orientations.append("LPS")
+            else:
                 nib_image = nib.load(f)
                 orientations.append("".join(nib.aff2axcodes(nib_image.affine)))
                 itk_image = sitk.DICOMOrient(itk_image, "LPS")
-            else:
-                orientations.append("LPS")
 
             npy_image = sitk.GetArrayFromImage(itk_image)
             if npy_image.ndim == 2:
@@ -134,7 +134,7 @@ class SimpleITKIO(BaseReaderWriter):
         seg: np.ndarray,
         output_fname: str,
         properties: dict,
-        force_LPS: bool = False,
+        is_LPS: bool = False,
     ) -> None:
         assert (
             seg.ndim == 3
@@ -148,7 +148,8 @@ class SimpleITKIO(BaseReaderWriter):
         itk_image.SetSpacing(properties["sitk_stuff"]["spacing"])
         itk_image.SetOrigin(properties["sitk_stuff"]["origin"])
         itk_image.SetDirection(properties["sitk_stuff"]["direction"])
-        if force_LPS:
+        
+        if not is_LPS:
             itk_image = sitk.DICOMOrient(itk_image, properties["sitk_stuff"]["orientation"])
 
         sitk.WriteImage(itk_image, output_fname, True)
