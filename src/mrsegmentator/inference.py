@@ -32,6 +32,9 @@ def infer(
     is_LPS: bool = False,
     verbose: bool = False,
     cpu_only: bool = False,
+    batchsize: int = 2,
+    nproc: int = 3,
+    nproc_export: int = 8,
 ):
     """Run model to create segmentations
     model_dir: path to model directory
@@ -71,8 +74,8 @@ def infer(
             [join(outdir, f) for f in out_names],
             save_probabilities=False,
             overwrite=False,
-            num_processes_preprocessing=2,
-            num_processes_segmentation_export=2,
+            num_processes_preprocessing=nproc,
+            num_processes_segmentation_export=nproc_export,
             folder_with_segs_from_prev_stage=None,
             num_parts=1,
             part_id=0,
@@ -80,10 +83,12 @@ def infer(
 
     else:
         # load batch of images
-        chunk_size = 4
-        for img_chunk in divide_chunks(images, chunk_size):
-            print("DEBUG", "chunk")
-            np_chunk = [SimpleITKIO().read_image(f, is_LPS=False) for f in img_chunk]
+        chunk_size = batchsize
+        for i, img_chunk in enumerate(divide_chunks(images, chunk_size)):
+            print(
+                f"Processing image { chunk_size*i + 1 } to {chunk_size*i + len(img_chunk)} out of {len(images)} images."
+            )
+            np_chunk = [SimpleITKIO().read_image(f, is_LPS=False, verbose=True) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 
@@ -93,9 +98,9 @@ def infer(
                 None,
                 props,
                 None,
-                2,
+                num_processes=nproc,
                 save_probabilities=False,
-                num_processes_segmentation_export=2,
+                num_processes_segmentation_export=nproc_export,
             )
 
             # paths to output images
@@ -104,4 +109,4 @@ def infer(
 
             # save images
             for seg, p, out in zip(segmentations, props, out_names):
-                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=False)
+                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=False, verbose=True)
