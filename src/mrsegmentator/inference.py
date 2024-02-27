@@ -29,7 +29,7 @@ def infer(
     outdir: str,
     images: List[str],
     postfix: str = "seg",
-    force_LPS: bool = False,
+    is_LPS: bool = False,
     verbose: bool = False,
     cpu_only: bool = False,
 ):
@@ -38,7 +38,7 @@ def infer(
     folds: which models to use for inference
     outdir: path to output directory
     images: list with paths to images
-    force_LPS: change orientation to LPS before inference"""
+    is_LPS: do not change orientation to LPS before inference"""
 
     # instantiate the nnUNetPredictor
     predictor = nnUNetPredictor(
@@ -58,7 +58,7 @@ def infer(
         checkpoint_name="checkpoint_final.pth",
     )
 
-    if not force_LPS:
+    if is_LPS:
         # paths to output images
         image_names = [ntpath.basename(f) for f in images]
         out_names = [add_postfix(name, postfix) for name in image_names]
@@ -80,7 +80,7 @@ def infer(
         # load batch of images
         chunk_size = 4
         for img_chunk in divide_chunks(images, chunk_size):
-            np_chunk = [SimpleITKIO().read_images([f], force_LPS=True) for f in img_chunk]
+            np_chunk = [SimpleITKIO().read_images([f], is_LPS=False) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 
@@ -101,4 +101,4 @@ def infer(
 
             # save images
             for seg, p, out in zip(segmentations, props, out_names):
-                SimpleITKIO().write_seg(seg, join(outdir, out), p, force_LPS=True)
+                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=False)

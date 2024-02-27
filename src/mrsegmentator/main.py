@@ -46,7 +46,7 @@ def crossval(namespace, images):
             outdir,
             images,
             namespace.postfix,
-            namespace.force_LPS,
+            namespace.is_LPS,
             namespace.verbose,
             namespace.cpu_only,
         )
@@ -103,7 +103,7 @@ def main():
         namespace.outdir,
         images,
         namespace.postfix,
-        namespace.force_LPS,
+        namespace.is_LPS,
         namespace.verbose,
         namespace.cpu_only,
     )

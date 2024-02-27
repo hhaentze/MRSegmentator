@@ -41,9 +41,9 @@ def initialize():
     parser.add_argument("--crossval", action="store_true", help="run each model individually")
 
     parser.add_argument(
-        "--force_LPS",
+        "--is_LPS",
         action="store_true",
-        help="change image orientation to LPS. Segmentations will be stored on the images' original orientation. (requires more memory)",  # noqa: E501
+        help="if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime",  # noqa: E501
     )
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
