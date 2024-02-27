@@ -40,6 +40,8 @@ def infer(
     images: list with paths to images
     is_LPS: do not change orientation to LPS before inference"""
 
+    print("DEBUG", "start inference")
+
     # instantiate the nnUNetPredictor
     predictor = nnUNetPredictor(
         tile_step_size=0.5,
@@ -80,7 +82,8 @@ def infer(
         # load batch of images
         chunk_size = 4
         for img_chunk in divide_chunks(images, chunk_size):
-            np_chunk = [SimpleITKIO().read_images([f], is_LPS=False) for f in img_chunk]
+            print("DEBUG", "chunk")
+            np_chunk = [SimpleITKIO().read_image(f, is_LPS=False) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 
