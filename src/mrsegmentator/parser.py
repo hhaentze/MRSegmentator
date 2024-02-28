@@ -63,6 +63,17 @@ def initialize():
         default=8,
         help="number of processes for exporting the segmentations",
     )
+    parser.add_argument(
+        "--split_level",
+        type=int,
+        default=0,
+        help="split images reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images",  # noqa: E501
+    )
+    parser.add_argument(
+        "--split_image_x4",
+        action="store_true",
+        help="split images in four quartes to reduce memory usage",
+    )
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
@@ -78,6 +89,15 @@ def assert_namespace(namespace):
     assert os.path.isfile(namespace.input) or os.path.isdir(
         namespace.input
     ), f"Input {namespace.input} not found"
+
+    # constraints
     assert namespace.batchsize >= 1, "batchsize must be greater than 1"
     assert namespace.nproc >= 1, "number of processes must be greater than 1"
     assert namespace.nproc_export >= 1, "number of processes must be greater than 1"
+    assert namespace.split_level >= 0, "split level must be equal or greather than zero"
+
+    # warnings
+    if namespace.split_level >= 3:
+        print(
+            f"Warning: Based on the specified split level of {namespace.split_level} images will be cut into 2^{namespace.split_level}={pow(2,namespace.split_level)} smaller images. Are you sure this is intended?"  # noqa: E501
+        )

@@ -13,7 +13,9 @@
 # limitations under the License.
 
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
+
+import numpy as np
 
 
 # Yield successive n-sized
@@ -31,3 +33,30 @@ def add_postfix(name: str, postfix: str):
         return add_postfix(name[:-3], postfix) + ".gz"
     else:
         raise ValueError("Files must end with either .nii or .nii.gz")
+
+
+def split_image(img: np.ndarray, margin=2) -> Tuple[np.ndarray, dict]:
+    assert img.ndim == 4, f"Unexpected number of dimensions: {img.ndim}"
+    depth = img.shape[1]
+    img1 = img[:, : depth // 2 + margin, :, :]
+    img2 = img[:, depth // 2 - margin :, :, :]
+    return img1, img2
+
+
+def stitch_segmentations(seg1: np.ndarray, seg2: np.ndarray, margin=2) -> np.ndarray:
+    assert (
+        seg1.ndim == 3 and seg2.ndim == 3
+    ), f"Unexpected number of dimensions: {seg1.ndim} and {seg2.ndim}"
+
+    # delete margin
+    seg1 = seg1[:-margin, :, :]
+    seg2 = seg2[margin:, :, :]
+
+    # concatenate
+    seg_combined = np.concatenate([seg1, seg2], axis=0)
+
+    return seg_combined
+
+
+def flatten(xss: List[List]) -> List:
+    return [x for xs in xss for x in xs]
