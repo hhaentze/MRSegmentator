@@ -20,7 +20,13 @@ from batchgenerators.utilities.file_and_folder_operations import join
 from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
 
 from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
-from mrsegmentator.utils import add_postfix, divide_chunks
+from mrsegmentator.utils import (
+    add_postfix,
+    divide_chunks,
+    flatten,
+    split_image,
+    stitch_segmentations,
+)
 
 
 def infer(
@@ -30,9 +36,10 @@ def infer(
     images: List[str],
     postfix: str = "seg",
     is_LPS: bool = False,
+    split_level: int = 0,
     verbose: bool = False,
     cpu_only: bool = False,
-    batchsize: int = 2,
+    batchsize: int = 3,
     nproc: int = 3,
     nproc_export: int = 8,
 ):
@@ -42,8 +49,6 @@ def infer(
     outdir: path to output directory
     images: list with paths to images
     is_LPS: do not change orientation to LPS before inference"""
-
-    print("DEBUG", "start inference")
 
     # instantiate the nnUNetPredictor
     predictor = nnUNetPredictor(
@@ -63,7 +68,7 @@ def infer(
         checkpoint_name="checkpoint_final.pth",
     )
 
-    if is_LPS:
+    if split_level == 0 and is_LPS:
         # paths to output images
         image_names = [ntpath.basename(f) for f in images]
         out_names = [add_postfix(name, postfix) for name in image_names]
@@ -81,14 +86,18 @@ def infer(
             part_id=0,
         )
 
-    else:
+    elif split_level == 0 and not is_LPS:
         # load batch of images
+        # (Loading all images at once might require too much memory, instead we procede chunk wise)
         chunk_size = batchsize
         for i, img_chunk in enumerate(divide_chunks(images, chunk_size)):
+
             print(
                 f"Processing image { chunk_size*i + 1 } to {chunk_size*i + len(img_chunk)} out of {len(images)} images."
             )
-            np_chunk = [SimpleITKIO().read_image(f, is_LPS=False, verbose=True) for f in img_chunk]
+
+            # load images
+            np_chunk = [SimpleITKIO().read_image(f, is_LPS=is_LPS, verbose=True) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 
@@ -109,4 +118,38 @@ def infer(
 
             # save images
             for seg, p, out in zip(segmentations, props, out_names):
-                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=False, verbose=True)
+                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=is_LPS, verbose=True)
+
+    else:
+        # sequential inference (parallelization would increase memory)
+        for i, img in enumerate(images):
+
+            # load image
+            print(f"Processing image { i + 1 } out of {len(images)} images.")
+            np_img, prop = SimpleITKIO().read_image(img, is_LPS=is_LPS, verbose=True)
+
+            # split image to reduce memory usage
+            np_imgs = [np_img]
+            for _ in range(split_level):
+                np_imgs = flatten([split_image(n) for n in np_imgs])
+
+            # infer
+            segmentations = []
+            for n in np_imgs:
+                seg = predictor.predict_single_npy_array(n, prop, None, None, False)
+                segmentations += [seg]
+
+            # stitch segmentations back together
+            for _ in range(split_level):
+                segmentations = [
+                    stitch_segmentations(segmentations[_i], segmentations[_i + 1])
+                    for _i in range(0, len(segmentations), 2)
+                ]
+
+            # paths to output image
+            out_name = add_postfix(ntpath.basename(img), postfix)
+
+            # save image
+            SimpleITKIO().write_seg(
+                segmentations[0], join(outdir, out_name), prop, is_LPS=is_LPS, verbose=True
+            )

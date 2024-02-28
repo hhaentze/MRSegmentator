@@ -36,12 +36,12 @@ class SimpleITKIO:
         spacing = itk_image.GetSpacing()
         origin = itk_image.GetOrigin()
         direction = itk_image.GetDirection()
+        itk_image = sitk.DICOMOrient(itk_image, "LPS")
         if is_LPS:
             orientation = "LPS"
         else:
             nib_image = nib.load(image_fname)
             orientation = "".join(nib.aff2axcodes(nib_image.affine))
-            itk_image = sitk.DICOMOrient(itk_image, "LPS")
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
@@ -89,11 +89,9 @@ class SimpleITKIO:
             seg = seg[0]
 
         itk_image = sitk.GetImageFromArray(seg.astype(np.uint8))
+        itk_image = sitk.DICOMOrient(itk_image, properties["sitk_stuff"]["orientation"])
         itk_image.SetSpacing(properties["sitk_stuff"]["spacing"])
         itk_image.SetOrigin(properties["sitk_stuff"]["origin"])
         itk_image.SetDirection(properties["sitk_stuff"]["direction"])
-
-        if not is_LPS:
-            itk_image = sitk.DICOMOrient(itk_image, properties["sitk_stuff"]["orientation"])
 
         sitk.WriteImage(itk_image, output_fname, True)

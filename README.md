@@ -26,9 +26,7 @@ python -m pip install -i https://test.pypi.org/simple/ --extra-index-url https:/
 mrsegmentator  \
 --modeldir "/sc-projects/sc-proj-cc06-ag-ki-radiologie/Niere/ukbb/ckpts/mr_segmentator_weights/" \
 --input <nifti file or directory> \
---outdir <directory> \
---force_LPS \
---fold 0 
+--outdir <directory> 
 
 # Download Weights (TODO) (Currently the weights are stored on the cluster)
 # wget https://www.url-placeholder.de/weights.zip
@@ -36,7 +34,7 @@ mrsegmentator  \
 ```
 
 ## Inference
-MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. Nifti files must be in the LPS orientation. If thats not the case for your data add the flag ```--force_LPS``` and MRSegmentator automaticaly changes image orientation before the inference step. Afterwards, the segmenation's orientation will be changed back to match the original image.
+MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator was trained on images in LPS orientation and automatically transforms input images accordingly. Afterwards, the segmenation's orientation will be changed back to match the original image. If you are certain that your images are in the LPS orientation you can skip this preoprocessing step by setting the ```--is_LPS``` flag (this significantly reduces runtime). MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
 
 ```bash
 mrsegmentator --modeldir <model directory> \
@@ -57,20 +55,12 @@ Options:
 --postfix <str> # postfix that will be added to segmentations. Default: "seg"
 --cpu_only # don't use a gpu
 --verbose
---batchsize # how many images can be loaded to memory at the same time, ideally this should equal the dataset size
---nproc # number of processes
---nproc_export # number of processes for exporting the segmentations
+--batchsize <int> # how many images can be loaded to memory at the same time, ideally this should equal the dataset size
+--nproc <int> # number of processes
+--nproc_export <int> # number of processes for exporting the segmentations
+--split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
 ```
 
-<!-- |option|required|description|
-| :-------- | :-------: |  :------- |
---modeldir \<str> | [required] | model directory | 
---indir <str>  | [required] | input directory | 
---outdir <str>  | [required] | output directory | 
---fold <int> |  |  Only use a single model for segmentations. This accelerates the prediction for the sake of accuracy. | 
---crossval  |  | Run all 5 models individually. Useful to analyse differences between the models. | 
---force_LPS  |  | change image orientation to LPS. The orientation of segmentations will be changed back to its original configuration after the inference step (increases RAM usage) | 
---cpu_only  |  | don't use a gpu |  -->
 
 ## Class details
 
