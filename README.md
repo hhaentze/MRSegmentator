@@ -1,7 +1,18 @@
-# MRSegmentator: Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences 
-> Detect and segment 40 classes in MRI scans of the abdominal / pelvic / chest region
+<h2 align="center"> MRSegmentator: Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences </h2>
 
-Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and chest regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images.
+***
+
+<div align="center">
+<a href="https://github.com/hhaentze/MRSegmentator/actions"><img alt="Continuous Integration" src="https://github.com/hhaentze/MRSegmentator/actions/workflows/ci.yml/badge.svg"></a>
+<a href="https://github.com/hhaentze/MRSegmentator/blob/master/License.txt"><img alt="License: Apache" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"></a>  
+<a href="https://test.pypi.org/project/mrsegmentator"><img alt="PyPI" src="https://img.shields.io/pypi/v/mrsegmentator"></a>  
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</div>
+
+> Detect and segment 40 classes in MRI scans of the abdominal / pelvic / thorax region
+
+
+Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images.
 
 ![Sample Image](images/MRSegmentator.png)
 
@@ -59,6 +70,20 @@ Options:
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
 --split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
+```
+
+## Python API
+```python
+from mrsegmentator import inference
+import os
+
+modeldir = "mrseg_weights"
+outdir = "outputdir"
+images = [f.path for f in os.scandir("image_dir")]
+folds = [0]
+
+inference.infer(modeldir, outdir, images, folds)
+
 ```
 
 
