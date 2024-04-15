@@ -67,12 +67,7 @@ def initialize():
         "--split_level",
         type=int,
         default=0,
-        help="split images reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images",  # noqa: E501
-    )
-    parser.add_argument(
-        "--split_image_x4",
-        action="store_true",
-        help="split images in four quartes to reduce memory usage",
+        help="split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images",  # noqa: E501
     )
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
@@ -93,7 +88,9 @@ def assert_namespace(namespace):
     # constraints
     assert namespace.batchsize >= 1, "batchsize must be greater than 1"
     assert namespace.nproc >= 1, "number of processes must be greater than 1"
-    assert namespace.nproc_export >= 1, "number of processes must be greater than 1"
+    assert (
+        namespace.nproc_export >= 1
+    ), "number of processes for image export must be greater than 1"
     assert namespace.split_level >= 0, "split level must be equal or greather than zero"
 
     # warnings
