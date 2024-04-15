@@ -14,19 +14,9 @@
 
 import os
 
-from mrsegmentator import parser
-
-# disable warning message about undefined environmental variables
-# (We assign temporary arbitrary values. The script does not use these)
-if os.environ.get("nnUNet_raw") is None:
-    os.environ["nnUNet_raw"] = "empty"
-if os.environ.get("nnUNet_preprocessed") is None:
-    os.environ["nnUNet_preprocessed"] = "empty"
-if os.environ.get("nnUNet_results") is None:
-    os.environ["nnUNet_results"] = "empty"
-
 from batchgenerators.utilities.file_and_folder_operations import join
 
+from mrsegmentator import parser
 from mrsegmentator.inference import infer
 
 
