@@ -12,21 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from mrsegmentator import utils  # isort:skip
+from mrsegmentator.simpleitk_reader_writer import SimpleITKIO  # isort:skip
+
 import ntpath
-from typing import List, Tuple, Union
+from typing import List, NoReturn, Tuple, Union
 
 import torch
 from batchgenerators.utilities.file_and_folder_operations import join
 from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
-
-from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
-from mrsegmentator.utils import (
-    add_postfix,
-    divide_chunks,
-    flatten,
-    split_image,
-    stitch_segmentations,
-)
 
 
 def infer(
@@ -42,7 +36,7 @@ def infer(
     batchsize: int = 3,
     nproc: int = 3,
     nproc_export: int = 8,
-):
+) -> NoReturn:
     """Run model to create segmentations
     model_dir: path to model directory
     folds: which models to use for inference
@@ -71,7 +65,7 @@ def infer(
     if split_level == 0 and is_LPS:
         # paths to output images
         image_names = [ntpath.basename(f) for f in images]
-        out_names = [add_postfix(name, postfix) for name in image_names]
+        out_names = [utils.add_postfix(name, postfix) for name in image_names]
 
         # variant 1, use list of files as inputs
         predictor.predict_from_files(
@@ -90,7 +84,7 @@ def infer(
         # load batch of images
         # (Loading all images at once might require too much memory, instead we procede chunk wise)
         chunk_size = batchsize
-        for i, img_chunk in enumerate(divide_chunks(images, chunk_size)):
+        for i, img_chunk in enumerate(utils.divide_chunks(images, chunk_size)):
 
             print(
                 f"Processing image { chunk_size*i + 1 } to {chunk_size*i + len(img_chunk)} out of {len(images)} images."
@@ -114,7 +108,7 @@ def infer(
 
             # paths to output images
             image_names = [ntpath.basename(f) for f in img_chunk]
-            out_names = [add_postfix(name, postfix) for name in image_names]
+            out_names = [utils.add_postfix(name, postfix) for name in image_names]
 
             # save images
             for seg, p, out in zip(segmentations, props, out_names):
@@ -131,7 +125,7 @@ def infer(
             # split image to reduce memory usage
             np_imgs = [np_img]
             for _ in range(split_level):
-                np_imgs = flatten([split_image(n) for n in np_imgs])
+                np_imgs = utils.flatten([utils.split_image(n) for n in np_imgs])
 
             # infer
             segmentations = []
@@ -142,12 +136,12 @@ def infer(
             # stitch segmentations back together
             for _ in range(split_level):
                 segmentations = [
-                    stitch_segmentations(segmentations[_i], segmentations[_i + 1])
+                    utils.stitch_segmentations(segmentations[_i], segmentations[_i + 1])
                     for _i in range(0, len(segmentations), 2)
                 ]
 
             # paths to output image
-            out_name = add_postfix(ntpath.basename(img), postfix)
+            out_name = utils.add_postfix(ntpath.basename(img), postfix)
 
             # save image
             SimpleITKIO().write_seg(
