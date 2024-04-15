@@ -25,9 +25,9 @@ from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
 
 def infer(
     model_dir: str,
-    folds: Union[List[int], Tuple[int, ...]],
     outdir: str,
     images: List[str],
+    folds: Union[List[int], Tuple[int, ...]],
     postfix: str = "seg",
     is_LPS: bool = False,
     split_level: int = 0,

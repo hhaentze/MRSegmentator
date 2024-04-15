@@ -32,8 +32,8 @@ def crossval(namespace, images):
         # run inference
         infer(
             namespace.modeldir,
-            (fold,),
             outdir,
+            (fold,),
             images,
             namespace.postfix,
             namespace.is_LPS,
@@ -93,9 +93,9 @@ def main():
     # run inference
     infer(
         namespace.modeldir,
-        folds,
         namespace.outdir,
         images,
+        folds,
         namespace.postfix,
         namespace.is_LPS,
         namespace.split_level,
