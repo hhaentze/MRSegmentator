@@ -14,12 +14,11 @@
 
 Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images.
 
-![Sample Image](images/MRSegmentator.png)
+![Sample Image](images/SampleSegmentation.png)
 
 ## Installation
 1. Install [PyTorch](https://pytorch.org/get-started/locally/) based on your system requirements
 2. Install MRSegmentator with pip 
-3. Download the weights and extract them into your model directory
 
 Example workflow:
 ```bash
@@ -27,49 +26,37 @@ Example workflow:
 conda create -n mrseg python=3.11 pip
 conda activate mrseg
 
-# Install pytorch
-conda  install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
+# Install PyTorch (will be different on your system, please refert to the PyTorch documentation)
+conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
 
 # Install MRSegmentator
-python -m pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple mrsegmentator
+python -m pip install mrsegmentator
 
 # Inference
-mrsegmentator  \
---modeldir "/sc-projects/sc-proj-cc06-ag-ki-radiologie/Niere/ukbb/ckpts/mr_segmentator_weights/" \
---input <nifti file or directory> \
---outdir <directory> 
-
-# Download Weights (TODO) (Currently the weights are stored on the cluster)
-# wget https://www.url-placeholder.de/weights.zip
-# unzip weights.zip
+mrsegmentator --input <nifti file or directory> --outdir <directory> 
 ```
 
 ## Inference
-MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator was trained on images in LPS orientation and automatically transforms input images accordingly. Afterwards, the segmenation's orientation will be changed back to match the original image. If you are certain that your images are in the LPS orientation you can skip this preoprocessing step by setting the ```--is_LPS``` flag (this significantly reduces runtime). MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
+MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator was trained on images in LPS orientation and automatically transforms input images accordingly. Afterwards, the segmenation's orientation will be changed back to match the original image. MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
 
 ```bash
-mrsegmentator --modeldir <model directory> \
-    --input <input directory or file> \
-    --outdir <output directory> 
+mrsegmentator --input <nifti file or directory> --outdir <directory> 
 ```
 
 Options:
 ```bash
---modeldir <str> [required]  # model directory
 --input <str> [required] # input directory or file
 --outdir <str> [required] # output directory
 
 --fold <int> # use only a single model for inference 
---crossval # Run all 5 models individually. Useful to analyse differences between the models.
-
+--postfix <str> # postfix that will be added to segmentations, default: "seg"
+--batchsize <int> # how many images can be loaded to memory at the same time, default: 8
+--split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
 --is_LPS # if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime
---postfix <str> # postfix that will be added to segmentations. Default: "seg"
---cpu_only # don't use a gpu
---verbose
---batchsize <int> # how many images can be loaded to memory at the same time, ideally this should equal the dataset size
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
---split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
+--cpu_only # don't use a gpu
+--verbose
 ```
 
 ## Python API
@@ -77,13 +64,11 @@ Options:
 from mrsegmentator import inference
 import os
 
-modeldir = "mrseg_weights"
 outdir = "outputdir"
 images = [f.path for f in os.scandir("image_dir")]
 folds = [0]
 
-inference.infer(modeldir, outdir, images, folds)
-
+inference.infer(outdir, images, folds)
 ```
 
 
