@@ -50,8 +50,9 @@ Options:
 
 --fold <int> # use only a single model for inference 
 --postfix <str> # postfix that will be added to segmentations, default: "seg"
---batchsize <int> # how many images can be loaded to memory at the same time, default: 8
 --split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
+
+--batchsize <int> # how many images can be loaded to memory at the same time, default: 8
 --is_LPS # if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
