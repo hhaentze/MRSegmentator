@@ -38,7 +38,6 @@ def initialize():
         choices=range(5),
         help="choose a model based on the validation folds",
     )
-    parser.add_argument("--crossval", action="store_true", help="run each model individually")
 
     parser.add_argument(
         "--is_LPS",

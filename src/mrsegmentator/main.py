@@ -20,32 +20,6 @@ from mrsegmentator import parser
 from mrsegmentator.inference import infer
 
 
-def crossval(namespace, images):
-    """Run each model individually"""
-
-    for fold in range(5):
-        # make directory
-        outdir = join(namespace.outdir, "fold" + str(fold))
-        if not os.path.exists(outdir):
-            os.mkdir(outdir)
-
-        # run inference
-        infer(
-            namespace.modeldir,
-            outdir,
-            (fold,),
-            images,
-            namespace.postfix,
-            namespace.is_LPS,
-            namespace.split_level,
-            namespace.verbose,
-            namespace.cpu_only,
-            namespace.batchsize,
-            namespace.nproc,
-            namespace.nproc_export,
-        )
-
-
 def read_images(namespace):
     # images must be of nifti format
     condition = lambda x: x[-7:] == ".nii.gz" or x[-4:] == ".nii"
@@ -70,11 +44,6 @@ def main():
 
     # select images for segmentation
     images = read_images(namespace)
-
-    # run all models individually
-    if namespace.crossval:
-        crossval(namespace, images)
-        return
 
     # ensemble prediction
     if namespace.fold is None:
