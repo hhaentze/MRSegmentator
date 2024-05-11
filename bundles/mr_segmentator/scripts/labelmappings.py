@@ -1,1 +1,0 @@
-../../../scripts/labelmappings.py
