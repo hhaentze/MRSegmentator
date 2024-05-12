@@ -2,6 +2,7 @@
 notebooks
 
 # data
+src/mrsegmentator/weights
 data/
 *.nii.gz
 *.nrrd
@@ -42,7 +43,6 @@ tmp*
 tags
 
 # Shell code and private paths
-config.py
 *.sh
 
 
