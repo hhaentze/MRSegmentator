@@ -13,7 +13,10 @@
 # limitations under the License.
 
 import argparse
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 
 
 def initialize():
@@ -23,8 +26,6 @@ def initialize():
 
     parser = argparse.ArgumentParser(prog=name, description=desc, epilog=epilog)
 
-    parser.add_argument("--modeldir", type=str, required=True, help="model directory")
-    parser.add_argument("--outdir", type=str, required=True, help="output directory")
     parser.add_argument(
         "-i",
         "--input",
@@ -32,6 +33,9 @@ def initialize():
         required=True,
         help="input image or directory with nifti images",
     )
+
+    parser.add_argument("--outdir", type=str, default="segmentations", help="output directory")
+
     parser.add_argument(
         "--fold",
         type=int,
@@ -39,11 +43,6 @@ def initialize():
         help="choose a model based on the validation folds",
     )
 
-    parser.add_argument(
-        "--is_LPS",
-        action="store_true",
-        help="if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime",  # noqa: E501
-    )
     parser.add_argument(
         "--batchsize",
         type=int,
@@ -78,7 +77,6 @@ def initialize():
 
 def assert_namespace(namespace):
     # requirements
-    assert os.path.isdir(namespace.modeldir), f"Model directory {namespace.modeldir} not found"
     assert os.path.isdir(namespace.outdir), f"Output directory {namespace.outdir} not found"
     assert os.path.isfile(namespace.input) or os.path.isdir(
         namespace.input
@@ -94,6 +92,7 @@ def assert_namespace(namespace):
 
     # warnings
     if namespace.split_level >= 3:
-        print(
-            f"Warning: Based on the specified split level of {namespace.split_level} images will be cut into 2^{namespace.split_level}={pow(2,namespace.split_level)} smaller images. Are you sure this is intended?"  # noqa: E501
+        logger.warning(
+            f"Warning: Based on the specified split level of {namespace.split_level} images will be cut into 2^{namespace.split_level}={pow(2,namespace.split_level)} smaller images. "  # noqa: E501
+            + "Are you sure this is intended?"
         )

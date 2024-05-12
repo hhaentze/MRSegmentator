@@ -24,7 +24,6 @@ class SimpleITKIO:
     def read_image(
         self,
         image_fname: str,
-        is_LPS: bool = False,
         verbose: bool = False,
     ) -> Tuple[np.ndarray, dict]:
 
@@ -37,11 +36,9 @@ class SimpleITKIO:
         origin = itk_image.GetOrigin()
         direction = itk_image.GetDirection()
         itk_image = sitk.DICOMOrient(itk_image, "LPS")
-        if is_LPS:
-            orientation = "LPS"
-        else:
-            nib_image = nib.load(image_fname)
-            orientation = "".join(nib.aff2axcodes(nib_image.affine))
+
+        nib_image = nib.load(image_fname)
+        orientation = "".join(nib.aff2axcodes(nib_image.affine))
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
@@ -73,7 +70,6 @@ class SimpleITKIO:
         seg: np.ndarray,
         output_fname: str,
         properties: dict,
-        is_LPS: bool = False,
         verbose: bool = False,
     ) -> None:
 

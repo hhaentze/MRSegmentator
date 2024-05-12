@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mrsegmentator import utils  # isort:skip
+from mrsegmentator import config, utils  # isort:skip
 from mrsegmentator.simpleitk_reader_writer import SimpleITKIO  # isort:skip
 
 import ntpath
+from pathlib import Path
 from typing import List, NoReturn, Tuple, Union
 
 import torch
@@ -24,12 +25,10 @@ from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
 
 
 def infer(
-    model_dir: str,
-    outdir: str,
     images: List[str],
+    outdir: str,
     folds: Union[List[int], Tuple[int, ...]],
     postfix: str = "seg",
-    is_LPS: bool = False,
     split_level: int = 0,
     verbose: bool = False,
     cpu_only: bool = False,
@@ -38,11 +37,15 @@ def infer(
     nproc_export: int = 8,
 ) -> NoReturn:
     """Run model to create segmentations
-    model_dir: path to model directory
     folds: which models to use for inference
     outdir: path to output directory
     images: list with paths to images
-    is_LPS: do not change orientation to LPS before inference"""
+    postfix: default='seg'
+    split_level: split images to reduce memory footprint
+    """
+
+    # make output directory
+    Path(outdir).mkdir(exist_ok=True)
 
     # instantiate the nnUNetPredictor
     predictor = nnUNetPredictor(
@@ -57,41 +60,23 @@ def infer(
 
     # initialize the network architecture, load the checkpoints
     predictor.initialize_from_trained_model_folder(
-        model_dir,
+        config.get_weights_dir(),
         use_folds=folds,
         checkpoint_name="checkpoint_final.pth",
     )
 
-    if split_level == 0 and is_LPS:
-        # paths to output images
-        image_names = [ntpath.basename(f) for f in images]
-        out_names = [utils.add_postfix(name, postfix) for name in image_names]
+    if split_level == 0:
 
-        # variant 1, use list of files as inputs
-        predictor.predict_from_files(
-            [[f] for f in images],
-            [join(outdir, f) for f in out_names],
-            save_probabilities=False,
-            overwrite=False,
-            num_processes_preprocessing=nproc,
-            num_processes_segmentation_export=nproc_export,
-            folder_with_segs_from_prev_stage=None,
-            num_parts=1,
-            part_id=0,
-        )
-
-    elif split_level == 0 and not is_LPS:
         # load batch of images
-        # (Loading all images at once might require too much memory, instead we procede chunk wise)
-        chunk_size = batchsize
-        for i, img_chunk in enumerate(utils.divide_chunks(images, chunk_size)):
+        # (loading all images at once might require too much memory, instead we procede chunk wise)
+        for i, img_chunk in enumerate(utils.divide_chunks(images, batchsize)):
 
             print(
-                f"Processing image { chunk_size*i + 1 } to {chunk_size*i + len(img_chunk)} out of {len(images)} images."
+                f"Processing image { batchsize*i + 1 } to {batchsize*i + len(img_chunk)} out of {len(images)} images."
             )
 
             # load images
-            np_chunk = [SimpleITKIO().read_image(f, is_LPS=is_LPS, verbose=True) for f in img_chunk]
+            np_chunk = [SimpleITKIO().read_image(f, verbose=True) for f in img_chunk]
             imgs = [f[0] for f in np_chunk]
             props = [f[1] for f in np_chunk]
 
@@ -112,7 +97,7 @@ def infer(
 
             # save images
             for seg, p, out in zip(segmentations, props, out_names):
-                SimpleITKIO().write_seg(seg, join(outdir, out), p, is_LPS=is_LPS, verbose=True)
+                SimpleITKIO().write_seg(seg, join(outdir, out), p, verbose=True)
 
     else:
         # sequential inference (parallelization would increase memory)
@@ -120,7 +105,7 @@ def infer(
 
             # load image
             print(f"Processing image { i + 1 } out of {len(images)} images.")
-            np_img, prop = SimpleITKIO().read_image(img, is_LPS=is_LPS, verbose=True)
+            np_img, prop = SimpleITKIO().read_image(img, verbose=True)
 
             # split image to reduce memory usage
             np_imgs = [np_img]
@@ -144,6 +129,4 @@ def infer(
             out_name = utils.add_postfix(ntpath.basename(img), postfix)
 
             # save image
-            SimpleITKIO().write_seg(
-                segmentations[0], join(outdir, out_name), prop, is_LPS=is_LPS, verbose=True
-            )
+            SimpleITKIO().write_seg(segmentations[0], join(outdir, out_name), prop, verbose=True)

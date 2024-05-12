@@ -14,9 +14,26 @@
 
 import os
 from pathlib import Path
-from typing import List, NoReturn, Tuple
+from typing import List, Tuple
 
 import numpy as np
+
+
+def read_images(namespace):
+    # images must be of nifti format
+    condition = lambda x: x[-7:] == ".nii.gz" or x[-4:] == ".nii"
+
+    # look for images in input directory
+    if os.path.isdir(namespace.input):
+        images = [f.path for f in os.scandir(namespace.input) if condition(f.name)]
+        assert (
+            len(images) > 0
+        ), f"no images with file ending .nii or .nii.gz in direcotry {namespace.input}"
+    else:
+        images = [namespace.input]
+        assert condition(images[0]), f"file ending of {namespace.input} neither .nii nor .nii.gz"
+
+    return images
 
 
 # Yield successive n-sized
@@ -61,18 +78,3 @@ def stitch_segmentations(seg1: np.ndarray, seg2: np.ndarray, margin=2) -> np.nda
 
 def flatten(xss: List[List]) -> List:
     return [x for xs in xss for x in xs]
-
-
-def disable_nnunet_path_warnings() -> NoReturn:
-    """disable warning message about undefined environmental variables
-    (We assign temporary arbitrary values. The script does not use these)"""
-
-    if os.environ.get("nnUNet_raw") is None:
-        os.environ["nnUNet_raw"] = "empty"
-    if os.environ.get("nnUNet_preprocessed") is None:
-        os.environ["nnUNet_preprocessed"] = "empty"
-    if os.environ.get("nnUNet_results") is None:
-        os.environ["nnUNet_results"] = "empty"
-
-
-disable_nnunet_path_warnings()
