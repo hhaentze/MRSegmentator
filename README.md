@@ -26,34 +26,33 @@ Example workflow:
 conda create -n mrseg python=3.11 pip
 conda activate mrseg
 
-# Install PyTorch (will be different on your system, please refert to the PyTorch documentation)
+# Install PyTorch (will be different on your system, please refer to the PyTorch documentation)
 conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
 
 # Install MRSegmentator
 python -m pip install mrsegmentator
 
 # Inference
-mrsegmentator --input <nifti file or directory> --outdir <directory> 
+mrsegmentator --input <nifti file or directory>
 ```
 
 ## Inference
 MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator was trained on images in LPS orientation and automatically transforms input images accordingly. Afterwards, the segmenation's orientation will be changed back to match the original image. MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
 
 ```bash
-mrsegmentator --input <nifti file or directory> --outdir <directory> 
+mrsegmentator --input <nifti file or directory>
 ```
 
 Options:
 ```bash
---input <str> [required] # input directory or file
---outdir <str> [required] # output directory
+-i, --input <str> [required] # input directory or file
 
+--outdir <str>  # output directory
 --fold <int> # use only a single model for inference 
 --postfix <str> # postfix that will be added to segmentations, default: "seg"
 --split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
 
 --batchsize <int> # how many images can be loaded to memory at the same time, default: 8
---is_LPS # if your images are in LPS orientation you can set this flag to skip one preprocessing step. This decreases runtime
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
 --cpu_only # don't use a gpu
@@ -69,7 +68,7 @@ outdir = "outputdir"
 images = [f.path for f in os.scandir("image_dir")]
 folds = [0]
 
-inference.infer(outdir, images, folds)
+inference.infer(images, outdir, folds)
 ```
 
 
