@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mrsegmentator import config  # noqa: F401
-from mrsegmentator import parser, utils
-from mrsegmentator.inference import infer
+from mrsegmentator import config, parser, utils
+
+config.disable_nnunet_path_warnings()
+
+from mrsegmentator.inference import infer  # noqa: E402
 
 
 def main():
@@ -47,4 +49,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("test", __file__, __name__)
     main()

@@ -12,16 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mrsegmentator import config, utils  # isort:skip
-from mrsegmentator.simpleitk_reader_writer import SimpleITKIO  # isort:skip
-
 import ntpath
 from pathlib import Path
 from typing import List, NoReturn, Tuple, Union
 
 import torch
-from batchgenerators.utilities.file_and_folder_operations import join
-from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor
+
+from mrsegmentator import config, utils
+from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
+
+config.disable_nnunet_path_warnings()
+from batchgenerators.utilities.file_and_folder_operations import join  # noqa: E402
+from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E402
 
 
 def infer(
@@ -43,6 +45,9 @@ def infer(
     postfix: default='seg'
     split_level: split images to reduce memory footprint
     """
+
+    # initialize weights directory
+    config.setup_mrseg()
 
     # make output directory
     Path(outdir).mkdir(exist_ok=True)
