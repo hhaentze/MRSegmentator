@@ -37,7 +37,6 @@ def get_weights_dir():
         weights_dir = module_dir / "weights"
 
     weights_dir.mkdir(exist_ok=True)
-    print(weights_dir)
 
     return weights_dir
 
