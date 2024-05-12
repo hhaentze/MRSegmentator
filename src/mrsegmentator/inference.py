@@ -18,7 +18,7 @@ from typing import List, NoReturn, Tuple, Union
 
 import torch
 
-from mrsegmentator import config, utils
+from mrsegmentator import config, postprocessing, utils
 from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
 
 config.disable_nnunet_path_warnings()
@@ -96,6 +96,9 @@ def infer(
                 num_processes_segmentation_export=nproc_export,
             )
 
+            # postprocessing
+            segmentations = [postprocessing.remap_wrapper(seg) for seg in segmentations]
+
             # paths to output images
             image_names = [ntpath.basename(f) for f in img_chunk]
             out_names = [utils.add_postfix(name, postfix) for name in image_names]
@@ -129,6 +132,9 @@ def infer(
                     utils.stitch_segmentations(segmentations[_i], segmentations[_i + 1])
                     for _i in range(0, len(segmentations), 2)
                 ]
+
+            # postprocessing
+            segmentations = [postprocessing.remap_wrapper(seg) for seg in segmentations]
 
             # paths to output image
             out_name = utils.add_postfix(ntpath.basename(img), postfix)
