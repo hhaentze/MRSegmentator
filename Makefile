@@ -1,3 +1,6 @@
+type:
+	mypy src --strict --ignore-missing-imports --python-version=3.11
+
 pretty:
 	isort --profile black src
 	black --line-length 100 src
@@ -8,6 +11,7 @@ test_pretty:
 
 test:
 	flake8-nb src
+	mypy src --strict --ignore-missing-imports --python-version=3.11
 
 clean:
 	python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
