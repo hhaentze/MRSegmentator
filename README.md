@@ -17,24 +17,16 @@ Contrary to CT scans, where tools for automatic multi-structure segmentation are
 ![Sample Image](images/SampleSegmentation.png)
 
 ## Installation
-1. Install [PyTorch](https://pytorch.org/get-started/locally/) based on your system requirements
-2. Install MRSegmentator with pip 
-
-Example workflow:
+Install MRSegmentator with pip:
 ```bash
 # Create virtual environment
 conda create -n mrseg python=3.11 pip
 conda activate mrseg
 
-# Install PyTorch (will be different on your system, please refer to the PyTorch documentation)
-conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.7 -c pytorch -c nvidia
-
 # Install MRSegmentator
 python -m pip install mrsegmentator
-
-# Inference
-mrsegmentator --input <nifti file or directory>
 ```
+(Optionally) If the installed pytorch version coming with nnunet is not compatible to your system, you might need to install it manually, please refer to [PyTorch](https://pytorch.org/get-started/locally/).
 
 ## Inference
 MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator was trained on images in LPS orientation and automatically transforms input images accordingly. Afterwards, the segmenation's orientation will be changed back to match the original image. MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
