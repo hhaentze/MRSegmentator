@@ -19,7 +19,7 @@ config.disable_nnunet_path_warnings()
 from mrsegmentator.inference import infer  # noqa: E402
 
 
-def main():
+def main() -> None:
     # initialize Parser
     namespace = parser.initialize()
     parser.assert_namespace(namespace)
@@ -31,7 +31,7 @@ def main():
     if namespace.fold is None:
         folds = (0, 1, 2, 3, 4)
     else:
-        folds = (namespace.fold,)
+        folds = (namespace.fold,)  # type: ignore
 
     # run inference
     infer(

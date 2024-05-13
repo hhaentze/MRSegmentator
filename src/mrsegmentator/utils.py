@@ -14,14 +14,17 @@
 
 import os
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, Callable, Iterator, List, Tuple, TypeVar
 
 import numpy as np
+from numpy.typing import NDArray
+
+T = TypeVar("T")
 
 
-def read_images(namespace):
+def read_images(namespace: Any) -> List[str]:
     # images must be of nifti format
-    condition = lambda x: x[-7:] == ".nii.gz" or x[-4:] == ".nii"
+    condition: Callable[[str], bool] = lambda x: x[-7:] == ".nii.gz" or x[-4:] == ".nii"
 
     # look for images in input directory
     if os.path.isdir(namespace.input):
@@ -38,13 +41,13 @@ def read_images(namespace):
 
 # Yield successive n-sized
 # chunks from l.
-def divide_chunks(l: List, n: int):  # noqa: E741
+def divide_chunks(l: List[T], n: int) -> Iterator[List[T]]:  # noqa: E741
     # looping till length l
     for i in range(0, len(l), n):
         yield l[i : i + n]
 
 
-def add_postfix(name: str, postfix: str):
+def add_postfix(name: str, postfix: str) -> str:
     if Path(name).suffix == ".nii":
         return Path(name).stem + "_" + postfix + ".nii"
     elif Path(name).suffix == ".gz":
@@ -53,7 +56,7 @@ def add_postfix(name: str, postfix: str):
         raise ValueError("Files must end with either .nii or .nii.gz")
 
 
-def split_image(img: np.ndarray, margin=2) -> Tuple[np.ndarray, dict]:
+def split_image(img: NDArray, margin: int = 2) -> Tuple[NDArray, NDArray]:
     assert img.ndim == 4, f"Unexpected number of dimensions: {img.ndim}"
     depth = img.shape[1]
     img1 = img[:, : depth // 2 + margin, :, :]
@@ -61,7 +64,7 @@ def split_image(img: np.ndarray, margin=2) -> Tuple[np.ndarray, dict]:
     return img1, img2
 
 
-def stitch_segmentations(seg1: np.ndarray, seg2: np.ndarray, margin=2) -> np.ndarray:
+def stitch_segmentations(seg1: NDArray, seg2: NDArray, margin: int = 2) -> np.ndarray:
     assert (
         seg1.ndim == 3 and seg2.ndim == 3
     ), f"Unexpected number of dimensions: {seg1.ndim} and {seg2.ndim}"
@@ -76,5 +79,5 @@ def stitch_segmentations(seg1: np.ndarray, seg2: np.ndarray, margin=2) -> np.nda
     return seg_combined
 
 
-def flatten(xss: List[List]) -> List:
+def flatten(xss: List[List[T] | Tuple[T, ...]]) -> List[T]:
     return [x for xs in xss for x in xs]

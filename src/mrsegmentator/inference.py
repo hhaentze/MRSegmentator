@@ -14,7 +14,7 @@
 
 import ntpath
 from pathlib import Path
-from typing import List, NoReturn, Tuple, Union
+from typing import List, Tuple, Union
 
 import torch
 
@@ -37,7 +37,7 @@ def infer(
     batchsize: int = 3,
     nproc: int = 3,
     nproc_export: int = 8,
-) -> NoReturn:
+) -> None:
     """Run model to create segmentations
     folds: which models to use for inference
     outdir: path to output directory
