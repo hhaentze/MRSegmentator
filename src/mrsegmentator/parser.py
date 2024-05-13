@@ -15,6 +15,7 @@
 import argparse
 import logging
 import os
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +78,10 @@ def initialize():
 
 def assert_namespace(namespace):
     # requirements
-    if namespace.outdir != "segmentations":
-        assert os.path.isdir(namespace.outdir), f"Output directory {namespace.outdir} not found"
+
+    assert os.path.isdir(
+        Path(namespace.outdir).parent
+    ), f"Parent of output directory {namespace.outdir} not found"
     assert os.path.isfile(namespace.input) or os.path.isdir(
         namespace.input
     ), f"Input {namespace.input} not found"
