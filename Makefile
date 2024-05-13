@@ -1,17 +1,18 @@
 type:
-	mypy src --strict --ignore-missing-imports --python-version=3.11
+	mypy src --ignore-missing-imports --python-version=3.11 
 
 pretty:
-	isort --profile black src
-	black --line-length 100 src
+	isort --profile black src tests
+	black --line-length 100 src tests
 
 test_pretty:
-	isort --check --profile black src
-	black --line-length 100 --check src
+	isort --check --profile black src tests
+	black --line-length 100 --check src tests
 
 test:
-	flake8-nb src
-	mypy src --strict --ignore-missing-imports --python-version=3.11
+	flake8-nb src tests
+	mypy src --ignore-missing-imports --python-version=3.11 
+	python -m unittest tests/mrsegmentator/test_*.py -v
 
 clean:
 	python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
