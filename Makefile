@@ -8,9 +8,9 @@ pretty:
 test_pretty:
 	isort --check --profile black src tests
 	black --line-length 100 --check src tests
+	flake8-nb src tests
 
 test:
-	flake8-nb src tests
 	mypy src --ignore-missing-imports --python-version=3.11 
 	python -m unittest tests/mrsegmentator/test_*.py -v
 

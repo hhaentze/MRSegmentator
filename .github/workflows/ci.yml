@@ -12,18 +12,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.8
+    - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
-        python-version: "3.8"
-    - name: Install dependencies
+        python-version: "3.11"
+    - name: Install linting dependencies
       run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel flake8-nb black[jupyter] isort mypy
-        
-    - name: Style changes
+    - name: Lint style changes
       run: |
         make test_pretty
-    - name: Lint with flake8-nb and pypy
+    - name: Install core dependencies
+      run: |
+        python -m pip install .
+    - name: Static type testing and unittest
       run: |
         make test
