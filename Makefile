@@ -1,13 +1,13 @@
 pretty:
-	isort .
-	black --line-length 100 .
+	isort --profile black src
+	black --line-length 100 src
 
 test_pretty:
-	isort --check --profile black .
-	black --line-length 100 --check .
+	isort --check --profile black src
+	black --line-length 100 --check src
 
 test:
-	flake8-nb
+	flake8-nb src
 
 clean:
 	python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
