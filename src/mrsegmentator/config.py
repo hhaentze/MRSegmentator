@@ -15,7 +15,6 @@
 import json
 import logging
 import os
-import shutil
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -79,15 +78,6 @@ def user_guard(func):
 
 
 @user_guard
-def delete_weights():
-
-    return
-    weights_dir = get_weights_dir()
-    if os.path.isdir(weights_dir):
-        shutil.rmtree(weights_dir)
-
-
-@user_guard
 def download_weights():
 
     weights_dir = get_weights_dir()
@@ -138,7 +128,6 @@ def setup_mrseg():
                 f"A new version ({WEIGHTS_VERSION}) of weights was found. "
                 + f"You have version {config_info['weights_version']}."
             )
-            delete_weights()
             download_weights()
 
     disable_nnunet_path_warnings()
