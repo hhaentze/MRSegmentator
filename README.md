@@ -12,7 +12,7 @@
 > Detect and segment 40 classes in MRI scans of the abdominal / pelvic / thorax region
 
 
-Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images.
+Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images. Read more about it in our preprint: https://arxiv.org/pdf/2405.06463.
 
 ![Sample Image](images/SampleSegmentation.png)
 
@@ -62,6 +62,9 @@ folds = [0]
 
 inference.infer(images, outdir, folds)
 ```
+
+## How To Cite
+If you use our work in your research, please cite our preprint on arXiv: https://arxiv.org/pdf/2405.06463.
 
 
 ## Class details
