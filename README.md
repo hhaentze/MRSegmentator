@@ -65,6 +65,11 @@ inference.infer(images, outdir, folds)
 
 ## How To Cite
 If you use our work in your research, please cite our preprint on arXiv: https://arxiv.org/pdf/2405.06463.
+```
+Hartmut Häntze, Lina Xu, Felix J. Dorfner, Leonhard Donle, Daniel Truhn, Hugo Aerts, Mathias Prokop, Bram
+van Ginneken, Alessa Hering, Lisa C. Adams, and Keno K. Bressem. MRSegmentator: Robust multi-modality
+segmentation of 40 classes in MRI and CT sequences. arXiv, 2024.
+```
 
 
 ## Class details
