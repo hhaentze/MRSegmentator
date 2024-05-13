@@ -14,6 +14,7 @@
 
 import numpy as np
 from monai.transforms import KeepLargestConnectedComponent
+from numpy.typing import NDArray
 
 organ_pairs = [
     (29, 30),  # femur
@@ -25,7 +26,7 @@ organ_pairs = [
 ]
 
 
-def remap_left_right(pred, left_class_id, right_class_id):
+def remap_left_right(pred: NDArray, left_class_id: int, right_class_id: int) -> NDArray:
 
     if left_class_id not in pred or right_class_id not in pred:
         return pred
@@ -58,7 +59,7 @@ def remap_left_right(pred, left_class_id, right_class_id):
     return pred
 
 
-def remap_wrapper(pred):
+def remap_wrapper(pred: NDArray) -> NDArray:
     for pair in organ_pairs:
         pred = remap_left_right(pred, pair[0], pair[1])
     return pred

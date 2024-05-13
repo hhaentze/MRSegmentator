@@ -16,11 +16,12 @@ import argparse
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def initialize():
+def initialize() -> Any:
     name = "MRSegmentator"
     desc = "Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences"
     epilog = "Charité AG KI - 2024"
@@ -76,7 +77,7 @@ def initialize():
     return args
 
 
-def assert_namespace(namespace):
+def assert_namespace(namespace: Any) -> None:
     # requirements
 
     assert os.path.isdir(

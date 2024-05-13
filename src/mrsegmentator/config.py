@@ -18,7 +18,7 @@ import os
 import urllib.request
 import zipfile
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, Dict
 
 from tqdm import tqdm
 
@@ -27,7 +27,7 @@ WEIGHTS_VERSION = 1.0
 WEIGHTS_URL = "https://github.com/hhaentze/MRSegmentator/releases/download/v1.0.0/weights.zip"
 
 
-def get_weights_dir():
+def get_weights_dir() -> Path:
 
     if "MRSEG_WEIGHTS_PATH" in os.environ:
         weights_dir = Path(os.environ["MRSEG_WEIGHTS_PATH"])
@@ -40,13 +40,13 @@ def get_weights_dir():
     return weights_dir
 
 
-def read_config():
+def read_config() -> Dict["str", float]:
 
     weights_dir = get_weights_dir()
 
     if os.path.exists(weights_dir / "version.json"):
         with open(weights_dir / "version.json", "r") as f:
-            config_info = json.load(f)
+            config_info: Dict["str", float] = json.load(f)
 
         return config_info
 
@@ -54,7 +54,7 @@ def read_config():
         return {"weights_version": 0.0}
 
 
-def disable_nnunet_path_warnings() -> NoReturn:
+def disable_nnunet_path_warnings() -> None:
     """disable warning message about undefined environmental variables
     (We assign temporary arbitrary values. The script does not use these)"""
 
@@ -66,7 +66,7 @@ def disable_nnunet_path_warnings() -> NoReturn:
         os.environ["nnUNet_results"] = "empty"
 
 
-def user_guard(func):
+def user_guard(func: Any) -> Any:
     """Check for user defined environment variables. We do NOT want to change user directories"""
 
     if "MRSEG_WEIGHTS_PATH" in os.environ:
@@ -78,7 +78,7 @@ def user_guard(func):
 
 
 @user_guard
-def download_weights():
+def download_weights() -> None:
 
     weights_dir = get_weights_dir()
 
@@ -95,7 +95,7 @@ def download_weights():
         desc=WEIGHTS_URL.split("/")[-1],
     ) as pbar:
 
-        def update_progress(block_num, block_size, total_size):
+        def update_progress(block_num: int, block_size: int, total_size: int) -> None:
             if pbar.total != total_size:
                 pbar.total = total_size
             pbar.update(block_num * block_size - pbar.n)
@@ -112,7 +112,7 @@ def download_weights():
     os.remove(weights_dir / "mrsegmentator_weights.zip")
 
 
-def setup_mrseg():
+def setup_mrseg() -> Path:
 
     weights_dir = get_weights_dir()
 

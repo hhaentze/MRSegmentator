@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import nibabel as nib
 import numpy as np
 import SimpleITK as sitk
+from numpy.typing import NDArray
 
 
 class SimpleITKIO:
@@ -25,7 +26,7 @@ class SimpleITKIO:
         self,
         image_fname: str,
         verbose: bool = False,
-    ) -> Tuple[np.ndarray, dict]:
+    ) -> Tuple[NDArray, NDArray]:
 
         if verbose:
             print(f"Read {image_fname}")
@@ -62,14 +63,14 @@ class SimpleITKIO:
         }
         return npy_image.astype(np.float32), _dict
 
-    def read_seg(self, seg_fname: str) -> Tuple[np.ndarray, dict]:
+    def read_seg(self, seg_fname: str) -> Tuple[NDArray, Dict[str, Any]]:
         return self.read_image(seg_fname)
 
     def write_seg(
         self,
         seg: np.ndarray,
         output_fname: str,
-        properties: dict,
+        properties: Dict[str, Any],
         verbose: bool = False,
     ) -> None:
 
