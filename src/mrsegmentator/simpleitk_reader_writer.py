@@ -26,7 +26,7 @@ class SimpleITKIO:
         self,
         image_fname: str,
         verbose: bool = False,
-    ) -> Tuple[NDArray, NDArray]:
+    ) -> Tuple[NDArray, Dict[str, Any]]:
 
         if verbose:
             print(f"Read {image_fname}")
@@ -39,7 +39,7 @@ class SimpleITKIO:
         itk_image = sitk.DICOMOrient(itk_image, "LPS")
 
         nib_image = nib.load(image_fname)
-        orientation = "".join(nib.aff2axcodes(nib_image.affine))
+        orientation = "".join(nib.aff2axcodes(nib_image.affine))  # type: ignore
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
@@ -68,7 +68,7 @@ class SimpleITKIO:
 
     def write_seg(
         self,
-        seg: np.ndarray,
+        seg: NDArray,
         output_fname: str,
         properties: Dict[str, Any],
         verbose: bool = False,
