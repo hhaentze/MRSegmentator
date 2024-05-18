@@ -18,7 +18,7 @@ Check out some sample segmentations on our [Hugging Face Space](https://huggingf
 
 
 ### Update:
-MRSegmentator v.1.0.0 did occasionally mix left & right classes. I retrained the model using the `nnUNetTrainerNoMirroring` trainer. The new version is vastly better in this regard.
+MRSegmentator v1.0.0 did occasionally mix left & right classes. I retrained the model using the `nnUNetTrainerNoMirroring` trainer. The new version is vastly better in this regard.
 The updated weights will be automatically downloaded with the latest pip release. You can update with:
 ```
 python -m pip install --upgrade mrsegmentator==1.1
