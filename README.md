@@ -16,7 +16,17 @@ Contrary to CT scans, where tools for automatic multi-structure segmentation are
 
 Check out some sample segmentations on our [Hugging Face Space](https://huggingface.co/spaces/DiGuaQiu/MRSegmentator)! 🤗
 
+
+### Update:
+MRSegmentator v.1.0.0 did occasionally mix left & right classes. I retrained the model using the `nnUNetTrainerNoMirroring` trainer. The new version is vastly better in this regard.
+The updated weights will be automatically downloaded with the latest pip release. You can update with:
+```
+python -m pip install --upgrade mrsegmentator==1.1
+```
+(Make sure to include the version number, sometimes pip doesn't do what you'd expect it to do.) 
+
 ![Sample Image](images/SampleSegmentation.png)
+
 
 ## Installation
 Install MRSegmentator with pip:
