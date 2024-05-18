@@ -105,7 +105,7 @@ def download_weights() -> None:
             WEIGHTS_URL, weights_dir / "mrsegmentator_weights.zip", reporthook=update_progress
         )
 
-    print("Extacting pretrained weights...")
+    print("Extracting pretrained weights...")
     with zipfile.ZipFile(weights_dir / "mrsegmentator_weights.zip", "r") as zip_ref:
         zip_ref.extractall(weights_dir)
 
