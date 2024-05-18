@@ -23,8 +23,8 @@ from typing import Any, Dict
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
-WEIGHTS_VERSION = 1.0
-WEIGHTS_URL = "https://github.com/hhaentze/MRSegmentator/releases/download/v1.0.0/weights.zip"
+WEIGHTS_VERSION = 1.1
+WEIGHTS_URL = "https://github.com/hhaentze/MRSegmentator/releases/download/v1.1.0/weights.zip"
 
 
 def get_weights_dir() -> Path:
