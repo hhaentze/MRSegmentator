@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v1.1.2 (24/06/2024)
+
+### Fix
+
+- Change python_requires from 3.11 to 3.9
+- Remove monai dependency
+
+
 ## v1.1.0 (18/05/2024)
 
 ### Feature

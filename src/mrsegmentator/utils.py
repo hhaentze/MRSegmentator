@@ -14,12 +14,10 @@
 
 import os
 from pathlib import Path
-from typing import Any, Callable, Iterator, List, Tuple, TypeVar
+from typing import Any, Callable, Iterator, List, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
-
-T = TypeVar("T")
 
 
 def read_images(namespace: Any) -> List[str]:
@@ -41,7 +39,7 @@ def read_images(namespace: Any) -> List[str]:
 
 # Yield successive n-sized
 # chunks from l.
-def divide_chunks(l: List[T], n: int) -> Iterator[List[T]]:  # noqa: E741
+def divide_chunks(l: List, n: int) -> Iterator[List]:  # noqa: E741
     # looping till length l
     for i in range(0, len(l), n):
         yield l[i : i + n]
@@ -79,5 +77,5 @@ def stitch_segmentations(seg1: NDArray, seg2: NDArray, margin: int = 2) -> NDArr
     return seg_combined
 
 
-def flatten(xss: List[List[T] | Tuple[T, ...]]) -> List[T]:
+def flatten(xss):
     return [x for xs in xss for x in xs]
