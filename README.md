@@ -1,4 +1,4 @@
-<h2 align="center"> MRSegmentator: Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences </h2>
+<h2 align="center"> MRSegmentator: Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences </h2> 
 
 ***
 
@@ -70,7 +70,7 @@ import os
 
 outdir = "outputdir"
 images = [f.path for f in os.scandir("image_dir")]
-folds = [0]
+folds = [0,1,2,3,4]
 
 inference.infer(images, outdir, folds)
 ```
@@ -129,3 +129,9 @@ segmentation of 40 classes in MRI and CT sequences. arXiv, 2024.
 | 38 | right_gluteus_medius |
 | 39 | left_gluteus_minimus |
 | 40 | right_gluteus_minimus |
+
+##  Acknowledgements
+This work was in large parts funded by the Wilhelm Sander Foundation.
+Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Health and Digital Executive Agency (HADEA). Neither the European Union nor the granting authority can be held responsible for them.
+
+![Funding Statement](images/eu_funding_statement.png)
