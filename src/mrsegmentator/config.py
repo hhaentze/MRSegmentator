@@ -23,8 +23,8 @@ from typing import Any, Dict
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
-WEIGHTS_VERSION = 1.1
-WEIGHTS_URL = "https://github.com/hhaentze/MRSegmentator/releases/download/v1.1.0/weights.zip"
+WEIGHTS_VERSION = 1.2
+WEIGHTS_URL = "https://github.com/hhaentze/MRSegmentator/releases/download/v1.2.0/weights.zip"
 
 
 def get_weights_dir() -> Path:
@@ -129,6 +129,8 @@ def setup_mrseg() -> Path:
                 + f"You have version {config_info['weights_version']}."
             )
             download_weights()
+
+    print(f"Using version {WEIGHTS_VERSION} for inference:")
 
     disable_nnunet_path_warnings()
 

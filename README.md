@@ -17,11 +17,12 @@ Contrary to CT scans, where tools for automatic multi-structure segmentation are
 Check out some sample segmentations on our [Hugging Face Space](https://huggingface.co/spaces/kbressem/MRSegmentator)! 🤗
 
 
-### Update:
-MRSegmentator v1.0.0 did occasionally mix left & right classes. I retrained the model using the `nnUNetTrainerNoMirroring` trainer. The new version is vastly better in this regard.
-The updated weights will be automatically downloaded with the latest pip release. You can update with:
+### Update v1.2:
+We moved the NAKO dataset from the test to the training-pipeline and retrained the model (See [Updated Weights](utils/Readme.md)). You can use the previous version, without NAKO images, by setting the version to 1.1 during installation with pip.
+
+You can update to the new version with:
 ```
-python -m pip install --upgrade mrsegmentator==1.1
+python -m pip install --upgrade mrsegmentator==1.2
 ```
 (Make sure to include the version number, sometimes pip doesn't do what you'd expect it to do.) 
 
@@ -85,6 +86,8 @@ segmentation of 40 classes in MRI and CT sequences. arXiv, 2024.
 
 
 ## Class details
+
+![Sample Image](images/Anatomy_40_classes.png)
 
 |Index|Class|
 | :-------- | :------- |

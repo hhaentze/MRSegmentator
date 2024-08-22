@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.0 (22/08/2024)
+
+### Feature
+
+- Add NAKO data to training pipeline
+- Update weights
+
 ## v1.1.2 (24/06/2024)
 
 ### Fix
