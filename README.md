@@ -71,9 +71,8 @@ import os
 
 outdir = "outputdir"
 images = [f.path for f in os.scandir("image_dir")]
-folds = [0,1,2,3,4]
 
-inference.infer(images, outdir, folds)
+inference.infer(images, outdir)
 ```
 
 ## How To Cite

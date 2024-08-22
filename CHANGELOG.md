@@ -9,6 +9,9 @@
 - Add NAKO data to training pipeline
 - Update weights
 
+### Fix
+- Make ensemble prediction default for Python API
+
 ## v1.1.2 (24/06/2024)
 
 ### Fix

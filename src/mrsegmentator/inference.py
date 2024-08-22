@@ -29,7 +29,7 @@ from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E4
 def infer(
     images: List[str],
     outdir: str,
-    folds: Union[List[int], Tuple[int, ...]],
+    folds: Union[List[int], Tuple[int, ...]] = [0, 1, 2, 3, 4],
     postfix: str = "seg",
     split_level: int = 0,
     verbose: bool = False,
