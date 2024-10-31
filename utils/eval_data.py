@@ -55,9 +55,9 @@ def calc_metric(data):
 def main():
 
     data_path = ""  # should have two sub directories preds and labels
-    result_path = ""
+    result_path = "."
 
-    names = {f.name for f in os.scandir(join(data_path, "preds")) if f.name[-7:] == ".nii.gz"}
+    names = [f.name for f in os.scandir(join(data_path, "preds")) if f.name[-7:] == ".nii.gz"]
     names.sort()
 
     preds = [join(data_path, "preds", n) for n in names]
@@ -70,7 +70,7 @@ def main():
     # Calculate Dice
     scores = calc_metric(data)
 
-    scores.to_csv(join(result_path, "/dice.csv"), index=False)
+    scores.to_csv(join(result_path, "dice.csv"), index=False)
 
 
 if __name__ == "__main__":
