@@ -1,4 +1,4 @@
-<h2 align="center"> MRSegmentator: Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences </h2> 
+<h2 align="center"> MRSegmentator: Multi-Modality Segmentation of 40 Classes in MRI and CT </h2> 
 
 ***
 
@@ -16,15 +16,8 @@ Contrary to CT scans, where tools for automatic multi-structure segmentation are
 
 Check out some sample segmentations on our [Hugging Face Space](https://huggingface.co/spaces/kbressem/MRSegmentator)! 🤗
 
-
-### Update v1.2:
-We moved the NAKO dataset from the test to the training-pipeline and retrained the model (See [Updated Weights](utils/Readme.md)). You can use the previous version, without NAKO images, by setting the version to 1.1 during installation with pip.
-
-You can update to the new version with:
-```
-python -m pip install --upgrade mrsegmentator==1.2
-```
-(Make sure to include the version number, sometimes pip doesn't do what you'd expect it to do.) 
+Understand the model in depth by reading our [Evaluation](evaluation) section. 
+ 
 
 ![Sample Image](images/SampleSegmentation.png)
 
@@ -55,9 +48,11 @@ Options:
 --outdir <str>  # output directory
 --fold <int> # use only a single model for inference 
 --postfix <str> # postfix that will be added to segmentations, default: "seg"
---split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images.
+--split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images
+--batchsize <int> # how many images can be loaded to memory at the same time, default: 8 
+# (higher batchsize reduces runtime at the cost of increased memory consumption)
 
---batchsize <int> # how many images can be loaded to memory at the same time, default: 8
+# experimental
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
 --cpu_only # don't use a gpu
