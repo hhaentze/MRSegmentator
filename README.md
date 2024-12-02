@@ -35,7 +35,8 @@ python -m pip install mrsegmentator
 (Optionally) If the installed pytorch version coming with nnunet is not compatible to your system, you might need to install it manually, please refer to [PyTorch](https://pytorch.org/get-started/locally/).
 
 ## Inference
-MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images (e.g. some CT scans). You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime and possibly reduces segmentation performance.
+MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fold 0`.
+MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images. You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime. Read more about the options in the [Evaluation](evaluation) section. 
 
 ```bash
 mrsegmentator --input <nifti file or directory>
@@ -48,14 +49,15 @@ Options:
 --outdir <str>  # output directory
 --fold <int> # use only a single model for inference 
 --postfix <str> # postfix that will be added to segmentations, default: "seg"
---split_level <int> # split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images
---batchsize <int> # how many images can be loaded to memory at the same time, default: 8 
-# (higher batchsize reduces runtime at the cost of increased memory consumption)
+--cpu_only # don't use a gpu
+
+# memory (mutually exclusive)
+--batchsize <int> # number of images that can be loaded to memory at the same time, default: 8 
+--split_level <int> # split images to reduce memory usage. Images are split recursively: A split level of x will produce 2^x smaller images
 
 # experimental
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
---cpu_only # don't use a gpu
 --verbose
 ```
 
@@ -72,12 +74,6 @@ inference.infer(images, outdir)
 
 ## How To Cite
 If you use our work in your research, please cite our preprint on arXiv: https://arxiv.org/pdf/2405.06463.
-```
-Hartmut Häntze, Lina Xu, Felix J. Dorfner, Leonhard Donle, Daniel Truhn, Hugo Aerts, Mathias Prokop, Bram
-van Ginneken, Alessa Hering, Lisa C. Adams, and Keno K. Bressem. MRSegmentator: Robust multi-modality
-segmentation of 40 classes in MRI and CT sequences. arXiv, 2024.
-```
-
 
 ## Class details
 
