@@ -31,11 +31,13 @@ def get_weights_dir() -> Path:
 
     if "MRSEG_WEIGHTS_PATH" in os.environ:
         weights_dir = Path(os.environ["MRSEG_WEIGHTS_PATH"])
+        if not os.path.exists(weights_dir):
+            raise FileNotFoundError(f"Could not find custom weights path {weights_dir}.")
+
     else:
         module_dir = Path(os.path.dirname(__file__))
         weights_dir = module_dir / "weights"
-
-    weights_dir.mkdir(exist_ok=True)
+        weights_dir.mkdir(exist_ok=True)
 
     return weights_dir
 
@@ -71,7 +73,7 @@ def user_guard(func: Any) -> Any:
 
     if "MRSEG_WEIGHTS_PATH" in os.environ:
         logger.info("User defined environment variables detected, skip directory operations.")
-        return
+        return lambda: None
 
     else:
         return func
@@ -116,21 +118,19 @@ def setup_mrseg() -> Path:
 
     weights_dir = get_weights_dir()
 
-    # Check if weights are downloaded
-    if not os.path.exists(weights_dir):
-        download_weights()
-
     # Check if weights are up to date
-    else:
-        config_info = read_config()
-        if config_info["weights_version"] < WEIGHTS_VERSION:
-            print(
-                f"A new version ({WEIGHTS_VERSION}) of weights was found. "
-                + f"You have version {config_info['weights_version']}."
-            )
+    config_info = read_config()
+    if config_info["weights_version"] < WEIGHTS_VERSION:
+        print(
+            f"A new version ({WEIGHTS_VERSION}) of weights was found. "
+            + f"You have version {config_info['weights_version']}."
+        )
+        if "MRSEG_WEIGHTS_PATH" not in os.environ:
             download_weights()
 
-    print(f"Using version {WEIGHTS_VERSION} for inference:")
+    # Check again, download may have changed version
+    config_info = read_config()
+    print(f"Using version {config_info['weights_version']} for inference:")
 
     disable_nnunet_path_warnings()
 
