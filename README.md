@@ -14,7 +14,7 @@
 
 Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images. Read more about it in our preprint: https://arxiv.org/pdf/2405.06463.
 
-Check out some sample segmentations on our [Hugging Face Space](https://huggingface.co/spaces/kbressem/MRSegmentator)! 🤗
+Check out some sample segmentations on our [Hugging Face Space](https://huggingface.co/spaces/DiGuaQiu/MRSegmentator-Gradio)! 🤗
 
 Understand the model in depth by reading our [Evaluation](evaluation) section. 
  
