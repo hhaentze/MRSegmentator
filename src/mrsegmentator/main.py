@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import time
+from datetime import timedelta
+
 from mrsegmentator import config, parser, utils
 
 config.disable_nnunet_path_warnings()
@@ -33,6 +36,7 @@ def main() -> None:
     else:
         folds = (namespace.fold,)  # type: ignore
 
+    start_time = time.time()
     # run inference
     infer(
         images,
@@ -46,8 +50,10 @@ def main() -> None:
         namespace.nproc,
         namespace.nproc_export,
     )
+    end_time = time.time()
+    time_delta = timedelta(seconds=round(end_time - start_time))
+    print(f"Finished segmentation in {time_delta}.")
 
 
 if __name__ == "__main__":
-    print("test", __file__, __name__)
     main()
