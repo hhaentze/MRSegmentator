@@ -2,6 +2,18 @@
 
 <!--next-version-placeholder-->
 
+## v1.2.3 (05/02/2025)
+
+### Feature
+- Print image and subvolume size if splitting is used
+- Add option --split_margin to allow to change overlap between splitted volumes
+
+### Fix
+- Set pytotch version to <= 2.3.1
+- Set python version to < 3.13
+- ==> Fixes toch.pickle error due to updated dependency- Supress torch.load future warning, introduced by nnunet
+- Increase default split_margin from 2 to 3
+
 ## v1.2.2 (11/12/2024)
 
 ### Feature
