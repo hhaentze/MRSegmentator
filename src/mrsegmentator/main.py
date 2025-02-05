@@ -49,6 +49,7 @@ def main() -> None:
         namespace.batchsize,
         namespace.nproc,
         namespace.nproc_export,
+        namespace.split_margin,
     )
     end_time = time.time()
     time_delta = timedelta(seconds=round(end_time - start_time))

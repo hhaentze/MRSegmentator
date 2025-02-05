@@ -37,6 +37,7 @@ def infer(
     batchsize: int = 3,
     nproc: int = 3,
     nproc_export: int = 8,
+    split_margin: int = 3,
 ) -> None:
     """Run model to create segmentations
     folds: which models to use for inference
@@ -44,6 +45,8 @@ def infer(
     images: list with paths to images
     postfix: default='seg'
     split_level: split images to reduce memory footprint
+    split_margin: Images are splitted with an overlap of 2xmargin, to avoid hard differences
+                  between segmentations of top and bottom image.
     """
 
     # initialize weights directory
@@ -115,7 +118,9 @@ def infer(
             # split image to reduce memory usage
             np_imgs = [np_img]
             for _ in range(split_level):
-                np_imgs = utils.flatten([utils.split_image(n) for n in np_imgs])
+                np_imgs = utils.flatten(
+                    [utils.split_image(n, margin=split_margin) for n in np_imgs]
+                )
 
             # infer
             segmentations = []
@@ -126,7 +131,9 @@ def infer(
             # stitch segmentations back together
             for _ in range(split_level):
                 segmentations = [
-                    utils.stitch_segmentations(segmentations[_i], segmentations[_i + 1])
+                    utils.stitch_segmentations(
+                        segmentations[_i], segmentations[_i + 1], margin=split_margin
+                    )
                     for _i in range(0, len(segmentations), 2)
                 ]
 

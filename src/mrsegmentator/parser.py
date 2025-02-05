@@ -69,6 +69,13 @@ def initialize() -> Any:
         default=0,
         help="split images to reduce memory usage. Images are split recusively: A split level of x will produce 2^x smaller images",  # noqa: E501
     )
+    parser.add_argument(
+        "--split_margin",
+        type=int,
+        default=3,
+        help="split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image",  # noqa: E501
+    )
+
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
@@ -94,6 +101,7 @@ def assert_namespace(namespace: Any) -> None:
         namespace.nproc_export >= 1
     ), "number of processes for image export must be greater than 1"
     assert namespace.split_level >= 0, "split level must be equal or greather than zero"
+    assert namespace.split_margin >= 0, "split margin must be equal or greather than zero"
 
     # warnings
     if namespace.split_level >= 3:

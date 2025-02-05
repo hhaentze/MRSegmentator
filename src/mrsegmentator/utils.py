@@ -54,7 +54,7 @@ def add_postfix(name: str, postfix: str) -> str:
         raise ValueError("Files must end with either .nii or .nii.gz")
 
 
-def split_image(img: NDArray, margin: int = 2) -> Tuple[NDArray, NDArray]:
+def split_image(img: NDArray, margin: int = 3) -> Tuple[NDArray, NDArray]:
     assert img.ndim == 4, f"Unexpected number of dimensions: {img.ndim}"
     depth = img.shape[1]
     img1 = img[:, : depth // 2 + margin, :, :]
@@ -62,14 +62,15 @@ def split_image(img: NDArray, margin: int = 2) -> Tuple[NDArray, NDArray]:
     return img1, img2
 
 
-def stitch_segmentations(seg1: NDArray, seg2: NDArray, margin: int = 2) -> NDArray:
+def stitch_segmentations(seg1: NDArray, seg2: NDArray, margin: int = 3) -> NDArray:
     assert (
         seg1.ndim == 3 and seg2.ndim == 3
     ), f"Unexpected number of dimensions: {seg1.ndim} and {seg2.ndim}"
 
     # delete margin
-    seg1 = seg1[:-margin, :, :]
-    seg2 = seg2[margin:, :, :]
+    if margin > 0:
+        seg1 = seg1[:-margin, :, :]
+        seg2 = seg2[margin:, :, :]
 
     # concatenate
     seg_combined = np.concatenate([seg1, seg2], axis=0)

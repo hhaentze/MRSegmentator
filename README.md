@@ -56,6 +56,7 @@ Options:
 --split_level <int> # split images to reduce memory usage. Images are split recursively: A split level of x will produce 2^x smaller images
 
 # experimental
+--split_margin <int> # split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image, default: 3
 --nproc <int> # number of processes
 --nproc_export <int> # number of processes for exporting the segmentations
 --verbose
