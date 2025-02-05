@@ -22,12 +22,8 @@ from mrsegmentator import config, utils
 from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
 
 config.disable_nnunet_path_warnings()
-import warnings  # noqa: E402
-
-with warnings.catch_warnings():
-    warnings.simplefilter(action="ignore", category=FutureWarning)
-    from batchgenerators.utilities.file_and_folder_operations import join  # noqa: E402
-    from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E402
+from batchgenerators.utilities.file_and_folder_operations import join  # noqa: E402
+from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E402
 
 
 def infer(
