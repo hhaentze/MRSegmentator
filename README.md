@@ -29,10 +29,14 @@ Install MRSegmentator with pip:
 conda create -n mrseg python=3.11 pip
 conda activate mrseg
 
+# Optionally: install pytorch. 
+# conda install pytorch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1 pytorch-cuda=12.1 -c pytorch -c nvidia
+
 # Install MRSegmentator
 python -m pip install mrsegmentator
 ```
-(Optionally) If the installed pytorch version coming with nnunet is not compatible to your system, you might need to install it manually, please refer to [PyTorch](https://pytorch.org/get-started/locally/).
+If the installed pytorch version is not compatible to your system, you might need to install it manually. One common error message is "A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.2 as it may crash." Please refer to [PyTorch](https://pytorch.org/get-started/locally/). MRSegmentator requires torch <= 2.3.1.
 
 ## Inference
 MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fold 0`.
@@ -72,6 +76,17 @@ images = [f.path for f in os.scandir("image_dir")]
 
 inference.infer(images, outdir)
 ```
+
+## Change Path to Weights
+MRSegmentator will automatically download its weights and save them in `.conda/envs/<name>/lib/python3.11/site-packages/mrsegmentator/weights`.
+This enables easy uninstallation including the weights, should you decide to clean your virtual environments.
+
+Alternatively you can save the weights in a set location on your machine. This helps a lot if you have multiple environments. For this you need to:
+1. Download them from [releases](https://github.com/hhaentze/MRSegmentator/releases/tag/v1.2.0) or move them from your conda environment
+2. Unzip the files
+3. Set the variable "MRSEG_WEIGHTS_PATH" to your weights directory
+(e.g.; `export MRSEG_WEIGHTS_PATH="/home/user/weights`)
+
 
 ## How To Cite
 If you use our work in your research, please cite our preprint on arXiv: https://arxiv.org/pdf/2405.06463.
