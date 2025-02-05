@@ -61,6 +61,10 @@ class SimpleITKIO:
             # are returned x,y,z but spacing is returned z,y,x. Duh.
             "spacing": list(spacing)[::-1],
         }
+
+        if verbose:
+            print(f"Image Size: {npy_image.shape}", f"Spacing: {_dict['spacing']}")
+
         return npy_image.astype(np.float32), _dict
 
     def read_seg(self, seg_fname: str) -> Tuple[NDArray, Dict[str, Any]]:

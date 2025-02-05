@@ -121,6 +121,7 @@ def infer(
                 np_imgs = utils.flatten(
                     [utils.split_image(n, margin=split_margin) for n in np_imgs]
                 )
+            print(f"Splitted image into {len(np_imgs)} volumes of size {np_imgs[0].shape}.")
 
             # infer
             segmentations = []
