@@ -22,6 +22,15 @@ Understand the model in depth by reading our [Evaluation](evaluation) section.
 ![Sample Image](images/SampleSegmentation.png)
 
 
+## Docker Image
+You can run an MRSegmentator Docker image directly from [MHub](https://mhub.ai/models/mrsegmentator).
+```bash
+$input_dir=/path/to/input
+$output_dir=/path/to/output
+
+docker run --rm -t --gpus all --network=none -v $input_dir:/app/data/input_data:ro -v $output_dir:/app/data/output_data mhubai/mrsegmentator:latest --workflow default
+```
+
 ## Installation
 Install MRSegmentator with pip:
 ```bash
