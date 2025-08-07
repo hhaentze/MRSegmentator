@@ -13,26 +13,34 @@
 # limitations under the License.
 
 import os
-from pathlib import Path
-from typing import Any, Callable, Iterator, List, Tuple
+from typing import Iterator, List, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
 
+SUPPORTED_FILES = (".nii", ".nii.gz")
 
-def read_images(namespace: Any) -> List[str]:
-    # images must be of nifti format
-    condition: Callable[[str], bool] = lambda x: x[-7:] == ".nii.gz" or x[-4:] == ".nii"
 
-    # look for images in input directory
-    if os.path.isdir(namespace.input):
-        images = [f.path for f in os.scandir(namespace.input) if condition(f.name)]
-        assert (
-            len(images) > 0
-        ), f"no images with file ending .nii or .nii.gz in direcotry {namespace.input}"
+def is_supported(file: str) -> bool:
+    for ext in SUPPORTED_FILES:
+        if file.endswith(ext):
+            return True
+    return False
+
+
+def read_images(input: str) -> List[str]:
+    if os.path.isdir(input):
+        images = [f.path for f in os.scandir(input) if is_supported(f.name)]
+        if len(images) == 0:
+            raise FileNotFoundError(
+                f"No images with supported file endings {SUPPORTED_FILES} in directory {input}"
+            )
     else:
-        images = [namespace.input]
-        assert condition(images[0]), f"file ending of {namespace.input} neither .nii nor .nii.gz"
+        if not is_supported(input):
+            raise ValueError(
+                f"File {input} not supported. (Supported file types: {SUPPORTED_FILES})"
+            )
+        images = [input]
 
     return images
 
@@ -46,12 +54,11 @@ def divide_chunks(l: List, n: int) -> Iterator[List]:  # noqa: E741
 
 
 def add_postfix(name: str, postfix: str) -> str:
-    if Path(name).suffix == ".nii":
-        return Path(name).stem + "_" + postfix + ".nii"
-    elif Path(name).suffix == ".gz":
-        return add_postfix(name[:-3], postfix) + ".gz"
-    else:
-        raise ValueError("Files must end with either .nii or .nii.gz")
+    for ext in SUPPORTED_FILES:
+        if name.endswith(ext):
+            base = name[: -len(ext)]
+            return f"{base}_{postfix}{ext}"
+    raise ValueError(f"File must end with one of: {SUPPORTED_FILES}")
 
 
 def split_image(img: NDArray, margin: int = 3) -> Tuple[NDArray, NDArray]:
