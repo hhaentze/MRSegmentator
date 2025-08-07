@@ -17,6 +17,8 @@ import time
 from datetime import timedelta
 from os.path import basename, join
 
+import torch
+
 from dicom_helper import utils as dcm_utils
 from dicom_helper.dicom_conversion import dicom_to_nifti as d2n
 from dicom_helper.dicom_conversion import nifti_to_dicom_seg as n2seg
@@ -60,6 +62,16 @@ def main() -> None:
         folds = (0, 1, 2, 3, 4)
     else:
         folds = (namespace.fold,)  # type: ignore
+
+    # check gpu availability
+    if not namespace.cpu_only and not torch.cuda.is_available():
+        logging.warning("No GPU available, running on CPU.")
+        if len(folds) > 1:
+            logging.warning(
+                "Running inference with multiple folds on CPU will be slow. "
+                "We recommend setting --fold 0 to deactivate ensembling."
+            )
+        namespace.cpu_only = True
 
     start_time = time.time()
     infer(
