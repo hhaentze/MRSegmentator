@@ -1,4 +1,6 @@
-# class_colors.py
+# Copyright 2025 Hartmut Häntze
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 
 CLASS_COLORS = {
     1: (255, 204, 204),  # Spleen - soft pink

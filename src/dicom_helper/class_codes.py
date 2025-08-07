@@ -1,4 +1,7 @@
-# class_codes.py
+# Copyright 2025 Hartmut Häntze
+# Licensed under the Apache License, Version 2.0
+# http://www.apache.org/licenses/LICENSE-2.0
+
 from highdicom.sr.coding import CodedConcept
 
 CLASS_CODES = {
