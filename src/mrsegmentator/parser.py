@@ -13,10 +13,19 @@ logger = logging.getLogger(__name__)
 
 def initialize() -> Any:
     name = "MRSegmentator"
-    desc = "Robust Multi-Modality Segmentation of 40 Classes in MRI and CT Sequences"
-    epilog = "Charité AG KI - 2024"
+    desc = "Multi-Modality Segmentation of 40 Classes in MRI and CT"
+    epilog = (
+        "AIAH Lab – 2024\n\n"
+        "Group website: https://ai-assisted-healthcare.com\n"
+        "Published paper: https://doi.org/10.1148/ryai.240777"
+    )
 
-    parser = argparse.ArgumentParser(prog=name, description=desc, epilog=epilog)
+    parser = argparse.ArgumentParser(
+        prog=name,
+        description=desc,
+        epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
 
     parser.add_argument(
         "-i",

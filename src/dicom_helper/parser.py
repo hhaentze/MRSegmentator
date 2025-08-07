@@ -10,9 +10,18 @@ def initialize() -> Any:
 
     name = "MRSegmentator DICOM Helper"
     desc = "DICOM/NIfTI conversion tool"
-    epilog = "Charité AG KI - 2024"
+    epilog = (
+        "AIAH Lab – 2025\n\n"
+        "Group website: https://ai-assisted-healthcare.com\n"
+        "Published paper: https://doi.org/10.1148/ryai.240777"
+    )
 
-    parser = argparse.ArgumentParser(prog=name, description=desc, epilog=epilog)
+    parser = argparse.ArgumentParser(
+        prog=name,
+        description=desc,
+        epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
 
     sub = parser.add_subparsers(dest="command", help="Available commands")
 
