@@ -35,7 +35,7 @@ def initialize() -> Any:
 
     # NIfTI to DICOM SEG
     p3 = sub.add_parser("n2seg", help="Convert NIfTI to DICOM SEG")
-    p3.add_argument("--nifti", "-n", required=True, help="Input NIfTI file")
+    p3.add_argument("--nifti", "-n", required=True, help="Input NIfTI segmentation file")
     p3.add_argument("--template", "-t", required=True, help="Template DICOM directory")
     p3.add_argument("--output", "-o", required=True, help="Output DICOM SEG file")
 
