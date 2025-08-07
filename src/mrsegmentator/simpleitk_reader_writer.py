@@ -12,12 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 from typing import Any, Dict, Tuple
 
 import nibabel as nib
 import numpy as np
 import SimpleITK as sitk
 from numpy.typing import NDArray
+
+logger = logging.getLogger(__name__)
+
+
+def log(verbose: bool, message: str) -> None:
+    """Log a message based on the verbosity level."""
+    if verbose:
+        logger.info(message)
+    else:
+        logger.debug(message)
 
 
 class SimpleITKIO:
@@ -28,8 +39,7 @@ class SimpleITKIO:
         verbose: bool = False,
     ) -> Tuple[NDArray, Dict[str, Any]]:
 
-        if verbose:
-            print(f"Read {image_fname}")
+        log(verbose, f"Read {image_fname}")
 
         # read image and save meta data
         itk_image = sitk.ReadImage(image_fname)
@@ -62,8 +72,7 @@ class SimpleITKIO:
             "spacing": list(spacing)[::-1],
         }
 
-        if verbose:
-            print(f"Image Size: {npy_image.shape}", f"Spacing: {_dict['spacing']}")
+        log(verbose, f"Image Size: {npy_image.shape}\tSpacing: {_dict['spacing']}")
 
         return npy_image.astype(np.float32), _dict
 
@@ -81,8 +90,7 @@ class SimpleITKIO:
         assert (
             seg.ndim == 3
         ), "segmentation must be 3d. If you are exporting a 2d segmentation, please provide it as shape 1,x,y"
-        if verbose:
-            print(f"Write {output_fname}")
+        log(verbose, f"Write {output_fname}")
 
         output_dimension = len(properties["sitk_stuff"]["spacing"])
         assert 1 < output_dimension < 4

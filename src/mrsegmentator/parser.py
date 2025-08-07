@@ -77,8 +77,15 @@ def initialize() -> Any:
     )
 
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
+
+    parser.add_argument(
+        "--log_level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set the logging level (default: INFO)",
+    )
+    parser.add_argument("--no_tqdm", action="store_true", help="disable tqdm progress bars")
 
     args = parser.parse_args()
     return args

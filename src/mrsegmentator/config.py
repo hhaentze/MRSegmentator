@@ -32,12 +32,14 @@ def get_weights_dir() -> Path:
     if "MRSEG_WEIGHTS_PATH" in os.environ:
         weights_dir = Path(os.environ["MRSEG_WEIGHTS_PATH"])
         if not os.path.exists(weights_dir):
+            logger.error(f"Could not find custom weights path {weights_dir}.")
             raise FileNotFoundError(f"Could not find custom weights path {weights_dir}.")
-
+        logger.debug("Using user defined weights directory: %s", weights_dir)
     else:
         module_dir = Path(os.path.dirname(__file__))
         weights_dir = module_dir / "weights"
         weights_dir.mkdir(exist_ok=True)
+        logger.debug("Using default weights directory.")
 
     return weights_dir
 
@@ -72,7 +74,7 @@ def user_guard(func: Any) -> Any:
     """Check for user defined environment variables. We do NOT want to change user directories"""
 
     if "MRSEG_WEIGHTS_PATH" in os.environ:
-        logger.info("User defined environment variables detected, skip directory operations.")
+        logger.debug("User defined environment variables detected, skip directory operations.")
         return lambda: None
 
     else:
@@ -84,7 +86,7 @@ def download_weights() -> None:
 
     weights_dir = get_weights_dir()
 
-    print("Downloading pretrained weights...")
+    logger.info("Downloading pretrained weights...")
     # Retrieve file size
     with urllib.request.urlopen(WEIGHTS_URL) as response:
         file_size = int(response.info().get("Content-Length", -1))
@@ -107,7 +109,7 @@ def download_weights() -> None:
             WEIGHTS_URL, weights_dir / "mrsegmentator_weights.zip", reporthook=update_progress
         )
 
-    print("Extracting pretrained weights...")
+    logger.debug("Extracting pretrained weights...")
     with zipfile.ZipFile(weights_dir / "mrsegmentator_weights.zip", "r") as zip_ref:
         zip_ref.extractall(weights_dir)
 
@@ -121,7 +123,7 @@ def setup_mrseg() -> Path:
     # Check if weights are up to date
     config_info = read_config()
     if config_info["weights_version"] < WEIGHTS_VERSION:
-        print(
+        logger.info(
             f"A new version ({WEIGHTS_VERSION}) of weights was found. "
             + f"You have version {config_info['weights_version']}."
         )
@@ -130,7 +132,7 @@ def setup_mrseg() -> Path:
 
     # Check again, download may have changed version
     config_info = read_config()
-    print(f"Using version {config_info['weights_version']} for inference:")
+    logger.debug(f"Using version {config_info['weights_version']} for inference:")
 
     disable_nnunet_path_warnings()
 

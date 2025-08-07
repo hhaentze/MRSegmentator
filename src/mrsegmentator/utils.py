@@ -45,8 +45,7 @@ def read_images(input: str) -> List[str]:
     return images
 
 
-# Yield successive n-sized
-# chunks from l.
+# Yield successive n-sized chunks from l.
 def divide_chunks(l: List, n: int) -> Iterator[List]:  # noqa: E741
     # looping till length l
     for i in range(0, len(l), n):

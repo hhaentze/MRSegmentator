@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import time
 from datetime import timedelta
 from os.path import basename, join
@@ -20,6 +21,7 @@ from dicom_helper import utils as dcm_utils
 from dicom_helper.dicom_conversion import dicom_to_nifti as d2n
 from dicom_helper.dicom_conversion import nifti_to_dicom_seg as n2seg
 from mrsegmentator import config, parser, utils
+from mrsegmentator.custom_logger import setup_logging
 
 config.disable_nnunet_path_warnings()
 
@@ -32,13 +34,16 @@ def main() -> None:
     namespace = parser.initialize()
     parser.assert_namespace(namespace)
 
+    setup_logging(level=namespace.log_level)
+
     try:
         images = utils.read_images(namespace.input)
         IS_DICOM = False
 
     except FileNotFoundError as e:
-        # mabye the user specified a DICOM directory
+        logging.debug("No images found in input directory. Checking if input is a DICOM directory.")
         if dcm_utils.has_dicom_file(namespace.input):
+            logging.info("DICOM found. Converting to NIfTI...")
             IS_DICOM = True
             target_name = basename(namespace.input) + f"_{namespace.postfix}"
             d2n(
@@ -57,26 +62,26 @@ def main() -> None:
         folds = (namespace.fold,)  # type: ignore
 
     start_time = time.time()
-    # run inference
     infer(
         images,
         namespace.outdir,
         folds,
         namespace.postfix,
         namespace.split_level,
-        namespace.verbose,
+        True if namespace.log_level == "DEBUG" else False,
         namespace.cpu_only,
         namespace.batchsize,
         namespace.nproc,
         namespace.nproc_export,
         namespace.split_margin,
+        not namespace.no_tqdm,
     )
     end_time = time.time()
     time_delta = timedelta(seconds=round(end_time - start_time))
-    print(f"Finished segmentation in {time_delta}.")
+    logging.info(f"Finished segmentation in {time_delta}.")
 
     if IS_DICOM:
-        print("Converting segmentation to DICOM SEG")
+        logging.info("Converting segmentation to DICOM SEG")
         n2seg(
             nifti_path=join(namespace.outdir, target_name + ".nii.gz"),
             template_dir=namespace.input,

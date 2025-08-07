@@ -57,7 +57,7 @@ def dicom_to_nifti(dicom_dir, output_dir=None, series_id=None, output_name="imag
     if series_id is None:
         if len(all_ids) > 1:
             series_info = list_series(dicom_dir)
-            logger.info("Multiple series found; using the first one.\nAvailable series:")
+            logger.warning("Multiple series found; using the first one.\nAvailable series:")
             for i, (sid, desc, mod, count) in enumerate(series_info):
                 logger.info(f"  {i}: {sid} - {desc} ({mod}, {count} files)")
         chosen = all_ids[0]
@@ -78,7 +78,6 @@ def dicom_to_nifti(dicom_dir, output_dir=None, series_id=None, output_name="imag
     output_file = os.path.join(output_dir, output_name)
     sitk.WriteImage(image, output_file)
     logger.info(f"Saved NIfTI to {output_file}")
-    logger.info(f"Image size: {image.GetSize()}, spacing: {image.GetSpacing()}")
     return output_file
 
 
@@ -310,9 +309,9 @@ def nifti_to_dicom_seg(nifti_path, template_dir, output_file, multiclass=True):
 
     try:
         # Create segmentation
-        logger.info(f"Pixel data shape: {pixel_data.shape}")
-        logger.info(f"Unique labels: {unique_labels}")
-        logger.info(f"Num segment_descriptions: {len(segment_descriptions)}")
+        logger.debug(f"Pixel data shape: {pixel_data.shape}")
+        logger.debug(f"Unique labels: {unique_labels}")
+        logger.debug(f"Num segment_descriptions: {len(segment_descriptions)}")
         assert pixel_data.shape[-1] == len(segment_descriptions), "Mismatch in segment count"
 
         segment = Segmentation(

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import ntpath
 from pathlib import Path
 from typing import List, Tuple, Union
@@ -24,6 +25,8 @@ from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
 config.disable_nnunet_path_warnings()
 from batchgenerators.utilities.file_and_folder_operations import join  # noqa: E402
 from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E402
+
+logger = logging.getLogger(__name__)
 
 
 def infer(
@@ -38,6 +41,7 @@ def infer(
     nproc: int = 3,
     nproc_export: int = 8,
     split_margin: int = 3,
+    allow_tqdm=True,
 ) -> None:
     """Run model to create segmentations
     folds: which models to use for inference
@@ -63,7 +67,7 @@ def infer(
         device=torch.device("cpu") if cpu_only else torch.device("cuda", 0),
         verbose=verbose,
         verbose_preprocessing=verbose,
-        allow_tqdm=True,
+        allow_tqdm=allow_tqdm,
     )
 
     # initialize the network architecture, load the checkpoints
@@ -79,7 +83,7 @@ def infer(
         # (loading all images at once might require too much memory, instead we procede chunk wise)
         for i, img_chunk in enumerate(utils.divide_chunks(images, batchsize)):
 
-            print(
+            logger.info(
                 f"Processing image { batchsize*i + 1 } to {batchsize*i + len(img_chunk)} out of {len(images)} images."
             )
 
@@ -112,7 +116,7 @@ def infer(
         for i, img in enumerate(images):
 
             # load image
-            print(f"Processing image { i + 1 } out of {len(images)} images.")
+            logger.info(f"Processing image { i + 1 } out of {len(images)} images.")
             np_img, prop = SimpleITKIO().read_image(img, verbose=True)
 
             # split image to reduce memory usage
@@ -121,7 +125,7 @@ def infer(
                 np_imgs = utils.flatten(
                     [utils.split_image(n, margin=split_margin) for n in np_imgs]
                 )
-            print(f"Splitted image into {len(np_imgs)} volumes of size {np_imgs[0].shape}.")
+            logger.info(f"Splitted image into {len(np_imgs)} volumes of size {np_imgs[0].shape}.")
 
             # infer
             segmentations = []
