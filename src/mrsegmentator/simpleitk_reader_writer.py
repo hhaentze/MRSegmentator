@@ -5,7 +5,6 @@
 import logging
 from typing import Any, Dict, Tuple
 
-import nibabel as nib
 import numpy as np
 import SimpleITK as sitk
 from numpy.typing import NDArray
@@ -19,6 +18,38 @@ def log(verbose: bool, message: str) -> None:
         logger.info(message)
     else:
         logger.debug(message)
+
+
+def get_orientation_string(image) -> str:
+    direction = np.array(image.GetDirection()).reshape(3, 3)
+
+    # Because SimpleITK uses LPS, we need to map it to RAS for consistency with nibabel
+    # L (Left, +X) -> R (Right, -X)
+    # P (Posterior, +Y) -> A (Anterior, -Y)
+    # S (Superior, +Z) stays S in both
+    # TODO evaluate if this is actually correct
+
+    # Mapping LPS to RAS axis labels
+    ras_labels = np.array(
+        [
+            ["R", "L"],  # X: Right (−), Left (+)
+            ["A", "P"],  # Y: Anterior (−), Posterior (+)
+            ["S", "I"],
+        ]
+    )  # Z: Superior (+), Inferior (−)
+
+    orientation = ""
+    for axis in direction.T:
+        dominant = np.argmax(np.abs(axis))
+        sign = np.sign(axis[dominant])
+
+        # Flip sign for X and Y to convert from LPS to RAS
+        if dominant in [0, 1]:  # X or Y
+            sign *= -1
+
+        orientation += ras_labels[dominant, 0 if sign > 0 else 1]
+
+    return orientation
 
 
 class SimpleITKIO:
@@ -36,10 +67,8 @@ class SimpleITKIO:
         spacing = itk_image.GetSpacing()
         origin = itk_image.GetOrigin()
         direction = itk_image.GetDirection()
+        orientation = get_orientation_string(itk_image)
         itk_image = sitk.DICOMOrient(itk_image, "LPS")
-
-        nib_image = nib.load(image_fname)
-        orientation = "".join(nib.aff2axcodes(nib_image.affine))  # type: ignore
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
