@@ -37,9 +37,11 @@ class TestUtils(unittest.TestCase):
         self.assertNotEqual(next(chunks), [0, 1, 2])
 
     def test_add_postfix(self):
-        self.assertEqual(utils.add_postfix("dir/image.nii", "seg"), "image_seg.nii")
+        self.assertEqual(utils.add_postfix("dir/image.nii", "seg"), "dir/image_seg.nii")
         self.assertEqual(utils.add_postfix("image.nii", "seg"), "image_seg.nii")
         self.assertEqual(utils.add_postfix("image.nii.gz", "seg"), "image_seg.nii.gz")
+        self.assertEqual(utils.add_postfix("image.mha", "seg"), "image_seg.mha")
+        self.assertEqual(utils.add_postfix("image.nrrd", "seg"), "image_seg.nrrd")
 
         self.assertNotEqual(utils.add_postfix("image.nii.gz", "seg"), "image.nii.gz")
 
