@@ -8,7 +8,7 @@ from typing import Iterator, List, Tuple
 import numpy as np
 from numpy.typing import NDArray
 
-SUPPORTED_FILES = (".nii", ".nii.gz", ".mha")
+SUPPORTED_FILES = (".nii", ".nii.gz", ".mha", ".nrrd")
 
 
 def is_supported(file: str) -> bool:
