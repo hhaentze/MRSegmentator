@@ -15,8 +15,9 @@
 Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images. 
 
 
-### Updates
+### Updates (v1.3.0)
 - Our paper has been published! Read more about MRSegmentator in Radiology AI: https://doi.org/10.1148/ryai.240777
+- We support .mha and .nrrd files now
 - We support DICOM now: If a DICOM directory is used as input a corresponding DICOM SEG will be generated.
 
 Understand the model in depth by reading our [Evaluation](evaluation) section. 
@@ -47,13 +48,13 @@ docker run --rm -t --gpus all --network=none -v $input_dir:/app/data/input_data:
 
 
 ## Inference
-MRSegmentator segments all .nii and .nii.gz files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fold 0`.
+MRSegmentator segments all `.nii/.nii.gz/.mha/.nrrd` files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fold 0`.
 MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images. You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime. Read more about the options in the [Evaluation](evaluation) section. 
 
-**New**: You can now also run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created NIfTI segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
+**New**: You can now also run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
 
 ```bash
-mrsegmentator --input <NIfTI file / NIfTI directory / DICOM directory>
+mrsegmentator --input <file / directory / DICOM directory>
 ```
 
 Options:
