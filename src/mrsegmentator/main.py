@@ -37,7 +37,9 @@ def main() -> None:
         if dcm_utils.has_dicom_file(namespace.input):
             logging.info("DICOM found. Converting to NIfTI...")
             IS_DICOM = True
-            target_name = basename(namespace.input) + f"_{namespace.postfix}"
+            target_name = basename(namespace.input)
+            if target_name == ".":
+                target_name = "dicom_input"
             d2n(
                 dicom_dir=namespace.input,
                 output_dir=namespace.outdir,
@@ -85,9 +87,9 @@ def main() -> None:
     if IS_DICOM:
         logging.info("Converting segmentation to DICOM SEG")
         n2seg(
-            nifti_path=join(namespace.outdir, target_name + ".nii.gz"),
+            nifti_path=join(namespace.outdir, target_name + f"_{namespace.postfix}.nii.gz"),
             template_dir=namespace.input,
-            output_file=join(namespace.outdir, target_name + ".dcm"),
+            output_file=join(namespace.outdir, target_name + f"_{namespace.postfix}.dcm"),
         )
 
 

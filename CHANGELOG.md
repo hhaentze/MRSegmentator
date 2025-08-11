@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v1.3.1 (11/08/2025)
+
+### Fix
+- fixed incorrect file names that occured when mapping DICOM to NIfTI
+
 ## v1.3.0 (09/08/2025)
 
 ### Feature
@@ -12,12 +17,6 @@
     - control log lebel (DEBUG, INFO, WARNING)
     - add flag --no_tqdm to disable progress bars
     - remove --verbose flag (replaced by --log_level DEBUG)
-
-### Fix
-- Set pytotch version to <= 2.3.1
-- Set python version to < 3.13
-- ==> Fixes toch.pickle error due to updated dependency- Supress torch.load future warning, introduced by nnunet
-- Increase default split_margin from 2 to 3
 
 ## v1.2.3 (05/02/2025)
 
