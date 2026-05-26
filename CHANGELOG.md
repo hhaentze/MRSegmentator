@@ -1,6 +1,10 @@
 # Changelog
 
 <!--next-version-placeholder-->
+## v1.3.2 (26/05/2026)
+
+### Fix
+- Fixed incorrect handling of image orientations such as PIL or ASL
 
 ## v1.3.1 (11/08/2025)
 

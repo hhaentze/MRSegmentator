@@ -69,6 +69,7 @@ class SimpleITKIO:
         direction = itk_image.GetDirection()
         orientation = get_orientation_string(itk_image)
         itk_image = sitk.DICOMOrient(itk_image, "LPS")
+        spacing_itk = itk_image.GetSpacing()
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
@@ -88,7 +89,7 @@ class SimpleITKIO:
             },
             # the spacing is inverted with [::-1] because sitk returns the spacing in the wrong order lol. Image arrays
             # are returned x,y,z but spacing is returned z,y,x. Duh.
-            "spacing": list(spacing)[::-1],
+            "spacing": list(spacing_itk)[::-1],
         }
 
         log(verbose, f"Image Size: {npy_image.shape}\tSpacing: {_dict['spacing']}")
