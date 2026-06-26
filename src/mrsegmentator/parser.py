@@ -75,6 +75,9 @@ def initialize() -> Any:
         help="split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image",  # noqa: E501
     )
 
+    parser.add_argument(
+        "--fast", action="store_true", help="use single fold with increased step size"
+    )
     parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
 
