@@ -93,6 +93,8 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+reports/
+integration_config.py
 
 # Translations
 *.mo
