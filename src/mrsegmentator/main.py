@@ -50,8 +50,10 @@ def main() -> None:
             raise e
 
     # ensemble/single prediction
-    if namespace.fold is None:
+    if namespace.fold is None and not namespace.fast:
         folds = (0, 1, 2, 3, 4)
+    elif namespace.fold is None:
+        folds = (0,)  # type: ignore
     else:
         folds = (namespace.fold,)  # type: ignore
 
@@ -61,7 +63,7 @@ def main() -> None:
         if len(folds) > 1:
             logging.warning(
                 "Running inference with multiple folds on CPU will be slow. "
-                "We recommend setting --fold 0 to deactivate ensembling."
+                "We recommend setting --fold 0 to deactivate ensemblin, or setting the --fast flag."
             )
         namespace.cpu_only = True
 
@@ -79,6 +81,7 @@ def main() -> None:
         namespace.nproc_export,
         namespace.split_margin,
         not namespace.no_tqdm,
+        namespace.fast,
     )
     end_time = time.time()
     time_delta = timedelta(seconds=round(end_time - start_time))

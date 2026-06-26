@@ -31,7 +31,8 @@ def infer(
     nproc: int = 3,
     nproc_export: int = 8,
     split_margin: int = 3,
-    allow_tqdm=True,
+    allow_tqdm: bool = True,
+    fast: bool = False,
 ) -> None:
     """Run model to create segmentations
     folds: which models to use for inference
@@ -51,9 +52,9 @@ def infer(
 
     # instantiate the nnUNetPredictor
     predictor = nnUNetPredictor(
-        tile_step_size=0.5,
+        tile_step_size=0.5 if not fast else 0.8,
         use_gaussian=True,
-        use_mirroring=True,
+        use_mirroring=True if not fast else False,
         device=torch.device("cpu") if cpu_only else torch.device("cuda", 0),
         verbose=verbose,
         verbose_preprocessing=verbose,

@@ -15,7 +15,6 @@ Run:
     make full    # smoke + integration
 """
 
-import logging
 import os
 import sys
 from pathlib import Path
@@ -85,7 +84,7 @@ def _run_infer(images: List[Path], weights: Path, tmp_path_factory) -> List[Tupl
     os.environ["MRSEG_WEIGHTS_PATH"] = str(weights)
 
     try:
-        infer([str(i) for i in images], outdir=str(outdir), folds=[0], cpu_only=True)
+        infer([str(i) for i in images], outdir=str(outdir), folds=[0], fast=True)
     finally:
         if old_env is None:
             os.environ.pop("MRSEG_WEIGHTS_PATH", None)
