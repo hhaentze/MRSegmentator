@@ -153,6 +153,26 @@ If you use our work in your research, please cite our article: https://doi.org/1
 | 39 | left_gluteus_minimus |
 | 40 | right_gluteus_minimus |
 
+
+## Testing
+The test suite has two modes:
+
+**Smoke tests** — no model weights or real images required, runs in seconds
+
+**Integration tests** — requires model weights and at least one real MRI/CT image
+
+```bash
+make smoke
+
+cp tests/mrsegmentator/integration_config.example.py tests/mrsegmentator/integration_config.py
+#fill in MODEL_PATH and TEST_IMAGES
+make full
+```
+
+Integration tests run inference exactly once and validate that outputs have correct labels, geometry, and are readable. 
+Slice figures (axial / coronal / sagittal) are saved to `reports/figures/` after each run.
+
+
 ##  Acknowledgements
 This work was in large parts funded by the Wilhelm Sander Foundation.
 Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Health and Digital Executive Agency (HADEA). Neither the European Union nor the granting authority can be held responsible for them.
