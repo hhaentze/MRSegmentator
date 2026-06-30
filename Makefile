@@ -1,16 +1,15 @@
-.PHONY: type pretty test_pretty smoke full compatibility test clean
+.PHONY: type format lint smoke full compatibility test clean
 
 type:
 	mypy src --ignore-missing-imports --python-version=3.11 
 
-pretty:
-	isort --profile black src tests
-	black --line-length 100 src tests
+format:
+	ruff format src tests
+	ruff check --select I --fix src tests
 
-test_pretty:
-	isort --check --profile black src tests
-	black --line-length 100 --check src tests
-	flake8-nb src tests
+lint:
+	ruff format --check src tests
+	ruff check src tests
 
 smoke:
 	pytest tests/mrsegmentator/test_utils.py tests/mrsegmentator/test_smoke.py  tests/mrsegmentator/test_weights.py -v
