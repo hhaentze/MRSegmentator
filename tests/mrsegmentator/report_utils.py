@@ -83,7 +83,7 @@ def save_slice_figure(mri_path: str, mask_path: str, title: str, out_png: str) -
         z, y, x = [s // 2 for s in mask_arr.shape]
 
     colors = _label_colors()
-    labels_present = sorted(set(int(v) for v in np.unique(mask_arr)) - {0})
+    labels_present = sorted({int(v) for v in np.unique(mask_arr)} - {0})
 
     fig, axes = plt.subplots(1, 3, figsize=(14, 5))
     fig.suptitle(title, fontsize=11, fontweight="bold")

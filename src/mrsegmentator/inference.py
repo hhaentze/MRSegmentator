@@ -18,11 +18,13 @@ from nnunetv2.inference.predict_from_raw_data import nnUNetPredictor  # noqa: E4
 
 logger = logging.getLogger(__name__)
 
+_DEFAULT_FOLDS: Tuple[int, ...] = (0, 1, 2, 3, 4)
+
 
 def infer(
     images: List[str],
     outdir: str,
-    folds: Union[List[int], Tuple[int, ...]] = [0, 1, 2, 3, 4],
+    folds: Union[List[int], Tuple[int, ...]] = _DEFAULT_FOLDS,
     postfix: str = "seg",
     split_level: int = 0,
     verbose: bool = False,
@@ -74,7 +76,8 @@ def infer(
         # (loading all images at once might require too much memory, instead we procede chunk wise)
         for i, img_chunk in enumerate(utils.divide_chunks(images, batchsize)):
             logger.info(
-                f"Processing image {batchsize * i + 1} to {batchsize * i + len(img_chunk)} out of {len(images)} images."
+                f"Processing image {batchsize * i + 1} to "
+                f"{batchsize * i + len(img_chunk)} out of {len(images)} images."
             )
 
             # load images
