@@ -4,3 +4,24 @@ build-backend = 'setuptools.build_meta'
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = [
+    "*.ipynb",
+    "notebooks",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "C", "I"]
+extend-ignore = [
+    "E203",  # whitespace before ':' (not PEP8/Black compliant)
+    "E731",  # lambda expressions can be a good alternative to small single-use functions
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E741"]
+
+[tool.ruff.format]
+# Black-compatible formatting (default), line-length above applies here too.
