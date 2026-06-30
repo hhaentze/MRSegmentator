@@ -5,19 +5,55 @@
 import argparse
 import logging
 import os
+import sys
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def initialize() -> Any:
-    name = "MRSegmentator"
-    desc = "Multi-Modality Segmentation of 40 Classes in MRI and CT"
+class TermStyle:
+    """
+    Manages ANSI escape codes for terminal styling, disabling them
+    if the output stream is not a TTY (e.g., output is redirected to a file).
+    """
+
+    # Check if the output stream is a terminal (TTY)
+    # We check stderr since that is where argparse prints help messages.
+    _is_tty = sys.stderr.isatty()
+
+    # --- Color Definitions ---
+    if _is_tty:
+        RED = "\033[31m"
+        GREEN = "\033[32m"  # darker green
+        YELLOW = "\033[33m"
+        CYAN = "\033[34m"  # dark blue
+        BOLD = "\033[1m"
+        RESET = "\033[0m"
+    else:
+        # Define empty strings if not running in a terminal
+        RED = GREEN = YELLOW = CYAN = BOLD = RESET = ""
+
+    @staticmethod
+    def style(text: str, color: str = "", bold: bool = False) -> str:
+        """Helper method to wrap text with color and optional bolding."""
+        prefix = color
+        if bold:
+            prefix = TermStyle.BOLD + prefix
+
+        # This will return "text" if TermStyle is using empty strings (non-TTY)
+        return f"{prefix}{text}{TermStyle.RESET}"
+
+
+def initialize() -> argparse.Namespace:
+
+    name = TermStyle.style("MRSegmentator", bold=True)
+    desc = TermStyle.style(
+        "Multi-Modality Segmentation of 40+10 Classes in MRI and CT", TermStyle.GREEN
+    )
     epilog = (
-        "AIAH Lab – 2024\n\n"
-        "Group website: https://ai-assisted-healthcare.com\n"
-        "Published paper: https://doi.org/10.1148/ryai.240777"
+        f"{TermStyle.BOLD}{'-'*20} AIAH Lab – 2024  {'-'*20}{TermStyle.RESET}\n"
+        f"Group website: {TermStyle.CYAN}https://radiologie.mri.tum.de/en/ai-assisted-healthcare{TermStyle.RESET}\n"
+        f"Published paper: {TermStyle.CYAN}https://doi.org/10.1148/ryai.240777{TermStyle.RESET}\n"
     )
 
     parser = argparse.ArgumentParser(
@@ -35,7 +71,9 @@ def initialize() -> Any:
         help="input image or directory with nifti images",
     )
 
-    parser.add_argument("--outdir", type=str, default="segmentations", help="output directory")
+    parser.add_argument(
+        "-o", "--outdir", type=str, default="segmentations", help="output directory"
+    )
 
     parser.add_argument(
         "--body_comp",
@@ -97,13 +135,18 @@ def initialize() -> Any:
     )
     parser.add_argument("--no_tqdm", action="store_true", help="disable tqdm progress bars")
 
+    # Print help if no arguments are provided at all
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(2)
+
     args = parser.parse_args()
     return args
 
 
-def assert_namespace(namespace: Any) -> None:
-    # requirements
+def assert_namespace(namespace: argparse.Namespace) -> None:
 
+    # requirements
     assert os.path.isdir(
         Path(namespace.outdir).parent
     ), f"Parent of output directory {namespace.outdir} not found"
