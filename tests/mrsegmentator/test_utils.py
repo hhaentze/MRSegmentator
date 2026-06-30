@@ -18,7 +18,6 @@ from mrsegmentator import utils
 
 
 class TestUtils(unittest.TestCase):
-
     def test_divide_chunks(self):
         l = list(range(10))
         chunks = utils.divide_chunks(l, 5)

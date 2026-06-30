@@ -53,7 +53,6 @@ def get_orientation_string(image) -> str:
 
 
 class SimpleITKIO:
-
     def read_image(
         self,
         image_fname: str,
@@ -73,9 +72,9 @@ class SimpleITKIO:
 
         # transform image to numpy array
         npy_image = sitk.GetArrayFromImage(itk_image)
-        assert (
-            npy_image.ndim == 3
-        ), f"Unexpected number of dimensions: {npy_image.ndim} in file {image_fname}"
+        assert npy_image.ndim == 3, (
+            f"Unexpected number of dimensions: {npy_image.ndim} in file {image_fname}"
+        )
         npy_image = npy_image[None]
 
         # combine numpy array with meta data
@@ -107,9 +106,9 @@ class SimpleITKIO:
         verbose: bool = False,
     ) -> None:
 
-        assert (
-            seg.ndim == 3
-        ), "segmentation must be 3d. If you are exporting a 2d segmentation, please provide it as shape 1,x,y"
+        assert seg.ndim == 3, (
+            "segmentation must be 3d. If you are exporting a 2d segmentation, please provide it as shape 1,x,y"
+        )
         log(verbose, f"Write {output_fname}")
 
         output_dimension = len(properties["sitk_stuff"]["spacing"])

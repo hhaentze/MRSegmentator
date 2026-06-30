@@ -59,9 +59,9 @@ def split_image(img: NDArray, margin: int = 3) -> Tuple[NDArray, NDArray]:
 
 
 def stitch_segmentations(seg1: NDArray, seg2: NDArray, margin: int = 3) -> NDArray:
-    assert (
-        seg1.ndim == 3 and seg2.ndim == 3
-    ), f"Unexpected number of dimensions: {seg1.ndim} and {seg2.ndim}"
+    assert seg1.ndim == 3 and seg2.ndim == 3, (
+        f"Unexpected number of dimensions: {seg1.ndim} and {seg2.ndim}"
+    )
 
     # delete margin
     if margin > 0:

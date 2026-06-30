@@ -51,7 +51,7 @@ def initialize() -> argparse.Namespace:
         "Multi-Modality Segmentation of 40+10 Classes in MRI and CT", TermStyle.GREEN
     )
     epilog = (
-        f"{TermStyle.BOLD}{'-'*20} AIAH Lab – 2024  {'-'*20}{TermStyle.RESET}\n"
+        f"{TermStyle.BOLD}{'-' * 20} AIAH Lab – 2024  {'-' * 20}{TermStyle.RESET}\n"
         f"Group website: {TermStyle.CYAN}https://radiologie.mri.tum.de/en/ai-assisted-healthcare{TermStyle.RESET}\n"
         f"Published paper: {TermStyle.CYAN}https://doi.org/10.1148/ryai.240777{TermStyle.RESET}\n"
     )
@@ -147,25 +147,25 @@ def initialize() -> argparse.Namespace:
 def assert_namespace(namespace: argparse.Namespace) -> None:
 
     # requirements
-    assert os.path.isdir(
-        Path(namespace.outdir).parent
-    ), f"Parent of output directory {namespace.outdir} not found"
-    assert os.path.isfile(namespace.input) or os.path.isdir(
-        namespace.input
-    ), f"Input {namespace.input} not found"
+    assert os.path.isdir(Path(namespace.outdir).parent), (
+        f"Parent of output directory {namespace.outdir} not found"
+    )
+    assert os.path.isfile(namespace.input) or os.path.isdir(namespace.input), (
+        f"Input {namespace.input} not found"
+    )
 
     # constraints
     assert namespace.batchsize >= 1, "batchsize must be greater than 1"
     assert namespace.nproc >= 1, "number of processes must be greater than 1"
-    assert (
-        namespace.nproc_export >= 1
-    ), "number of processes for image export must be greater than 1"
+    assert namespace.nproc_export >= 1, (
+        "number of processes for image export must be greater than 1"
+    )
     assert namespace.split_level >= 0, "split level must be equal or greather than zero"
     assert namespace.split_margin >= 0, "split margin must be equal or greather than zero"
 
     # warnings
     if namespace.split_level >= 3:
         logger.warning(
-            f"Warning: Based on the specified split level of {namespace.split_level} images will be cut into 2^{namespace.split_level}={pow(2,namespace.split_level)} smaller images. "  # noqa: E501
+            f"Warning: Based on the specified split level of {namespace.split_level} images will be cut into 2^{namespace.split_level}={pow(2, namespace.split_level)} smaller images. "  # noqa: E501
             + "Are you sure this is intended?"
         )
