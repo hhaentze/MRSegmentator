@@ -202,7 +202,7 @@ def nifti_to_dicom_slices(nifti_path, template_dir, output_dir, dtype="uint8", m
             seg_ds.TransferSyntaxUID = "1.2.840.10008.1.2.1"  # Explicit VR Little Endian
 
             # Save file
-            output_file = os.path.join(output_dir, f"seg_{idx+1:03d}.dcm")
+            output_file = os.path.join(output_dir, f"seg_{idx + 1:03d}.dcm")
             seg_ds.save_as(output_file)
             saved_count += 1
 

@@ -138,9 +138,9 @@ class TestModel:
     def test_geometry_matches_input(self, segmentations):
         for img, out in segmentations:
             for got, want in zip(_spacing(out), _spacing(img)):
-                assert (
-                    abs(got - want) < 0.01
-                ), f"{out.name}: spacing mismatch — got {_spacing(out)}, want {_spacing(img)}"
+                assert abs(got - want) < 0.01, (
+                    f"{out.name}: spacing mismatch — got {_spacing(out)}, want {_spacing(img)}"
+                )
 
     def test_multiple_structures_present(self, segmentations):
         for _, out in segmentations:

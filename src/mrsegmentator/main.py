@@ -38,7 +38,6 @@ def main() -> None:
         IS_DICOM = False
 
     except FileNotFoundError as e:
-
         from dicom_helper import utils as dcm_utils
         from dicom_helper.dicom_conversion import dicom_to_nifti, nifti_to_dicom_seg
 

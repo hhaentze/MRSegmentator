@@ -70,13 +70,11 @@ def infer(
     )
 
     if split_level == 0:
-
         # load batch of images
         # (loading all images at once might require too much memory, instead we procede chunk wise)
         for i, img_chunk in enumerate(utils.divide_chunks(images, batchsize)):
-
             logger.info(
-                f"Processing image { batchsize*i + 1 } to {batchsize*i + len(img_chunk)} out of {len(images)} images."
+                f"Processing image {batchsize * i + 1} to {batchsize * i + len(img_chunk)} out of {len(images)} images."
             )
 
             # load images
@@ -106,9 +104,8 @@ def infer(
     else:
         # sequential inference (parallelization would increase memory)
         for i, img in enumerate(images):
-
             # load image
-            logger.info(f"Processing image { i + 1 } out of {len(images)} images.")
+            logger.info(f"Processing image {i + 1} out of {len(images)} images.")
             np_img, prop = SimpleITKIO().read_image(img, verbose=True)
 
             # split image to reduce memory usage
