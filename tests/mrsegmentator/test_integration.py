@@ -15,10 +15,10 @@ Run:
     make full    # smoke + integration
 """
 
-import os
 import sys
+import time
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import numpy as np
 import pytest
@@ -42,12 +42,7 @@ if cfg is None:
         allow_module_level=True,
     )
 
-MODEL_PATH: Path = cfg.MODEL_PATH
 TEST_IMAGES: List[Path] = cfg.TEST_IMAGES
-BODY_COMP_MODEL_PATH: Optional[Path] = getattr(cfg, "BODY_COMP_MODEL_PATH", None)
-
-if not MODEL_PATH.exists():
-    pytest.skip(f"MODEL_PATH does not exist: {MODEL_PATH}", allow_module_level=True)
 
 missing = [p for p in TEST_IMAGES if not p.exists()]
 if missing:
@@ -71,7 +66,7 @@ def _spacing(path: Path):
     return sitk.ReadImage(str(path)).GetSpacing()
 
 
-def _run_infer(images: List[Path], weights: Path, tmp_path_factory) -> List[Tuple[Path, Path]]:
+def _run_infer(images: List[Path], model_name: str, tmp_path_factory) -> List[Tuple[Path, Path]]:
     """
     Run infer() once for all images and return [(input, output), ...].
     """
@@ -80,16 +75,11 @@ def _run_infer(images: List[Path], weights: Path, tmp_path_factory) -> List[Tupl
 
     outdir = tmp_path_factory.mktemp("seg")
 
-    old_env = os.environ.get("MRSEG_WEIGHTS_PATH")
-    os.environ["MRSEG_WEIGHTS_PATH"] = str(weights)
-
+    t0 = time.monotonic()
     try:
-        infer([str(i) for i in images], outdir=str(outdir), folds=[0], fast=True)
+        infer([str(i) for i in images], outdir=str(outdir), fast=True, model_name=model_name)
     finally:
-        if old_env is None:
-            os.environ.pop("MRSEG_WEIGHTS_PATH", None)
-        else:
-            os.environ["MRSEG_WEIGHTS_PATH"] = old_env
+        elapsed = time.monotonic() - t0
 
     return [(img, outdir / add_postfix(img.name, "seg")) for img in images]
 
@@ -109,23 +99,18 @@ def _save_figure(ct_path: Path, mask_path: Path, stem: str) -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture(scope="session")
-def main_segs(tmp_path_factory):
-    """Run main-model inference on all TEST_IMAGES; return [(in, out), ...]."""
-    pairs = _run_infer(TEST_IMAGES, MODEL_PATH, tmp_path_factory)
-    for ct, mask in pairs:
-        _save_figure(ct, mask, f"{ct.stem}_main")
-    return pairs
+@pytest.fixture(scope="session", params=["base", "body_comp"])
+def segmentations(request, tmp_path_factory):
+    """
+    Runs inference and saves figures for each configured model exactly once.
+    Automatically parameterizes any test that requests this fixture.
+    """
+    model_name = request.param
+    pairs = _run_infer(TEST_IMAGES, model_name, tmp_path_factory)
 
+    for img, mask in pairs:
+        _save_figure(img, mask, f"{img.stem}_{model_name}")
 
-@pytest.fixture(scope="session")
-def body_comp_segs(tmp_path_factory):
-    """Run body-comp model inference. Skipped if BODY_COMP_MODEL_PATH is not set."""
-    if BODY_COMP_MODEL_PATH is None or not BODY_COMP_MODEL_PATH.exists():
-        pytest.skip("BODY_COMP_MODEL_PATH not configured — skipping body-comp tests.")
-    pairs = _run_infer(TEST_IMAGES, BODY_COMP_MODEL_PATH, tmp_path_factory)
-    for ct, mask in pairs:
-        _save_figure(ct, mask, f"{ct.stem}_body_comp")
     return pairs
 
 
@@ -135,34 +120,40 @@ def body_comp_segs(tmp_path_factory):
 
 
 class TestModel:
-    def test_all_outputs_exist(self, main_segs):
-        for _, out in main_segs:
+    def test_all_outputs_exist(self, segmentations):
+        for _, out in segmentations:
             assert out.exists(), f"Output file not created: {out}"
 
-    def test_labels_in_valid_range(self, main_segs):
-        for _, out in main_segs:
-            unexpected = _read_labels(out) - set(range(MAIN_MODEL_MAX_LABEL + 1))
+    def test_labels_in_valid_range(self, segmentations, request):
+
+        if "body_comp" in request.node.name:
+            max_label = BODY_COMP_MAX_LABEL
+        else:
+            max_label = MAIN_MODEL_MAX_LABEL
+
+        for _, out in segmentations:
+            unexpected = _read_labels(out) - set(range(max_label + 1))
             assert not unexpected, f"{out.name}: unexpected label(s) {unexpected}"
 
-    def test_geometry_matches_input(self, main_segs):
-        for ct, out in main_segs:
-            for got, want in zip(_spacing(out), _spacing(ct)):
+    def test_geometry_matches_input(self, segmentations):
+        for img, out in segmentations:
+            for got, want in zip(_spacing(out), _spacing(img)):
                 assert (
                     abs(got - want) < 0.01
-                ), f"{out.name}: spacing mismatch — got {_spacing(out)}, want {_spacing(ct)}"
+                ), f"{out.name}: spacing mismatch — got {_spacing(out)}, want {_spacing(img)}"
 
-    def test_multiple_structures_present(self, main_segs):
-        for _, out in main_segs:
+    def test_multiple_structures_present(self, segmentations):
+        for _, out in segmentations:
             foreground = _read_labels(out) - {0}
             assert len(foreground) >= 5, (
                 f"{out.name}: expected ≥5 foreground structures, "
                 f"got {len(foreground)}: {foreground}"
             )
 
-    def test_output_readable_by_sitkio(self, main_segs):
+    def test_output_readable_by_sitkio(self, segmentations):
         from mrsegmentator.simpleitk_reader_writer import SimpleITKIO
 
-        for _, out in main_segs:
+        for _, out in segmentations:
             arr, props = SimpleITKIO().read_image(str(out))
             assert arr.ndim == 4, f"{out.name}: expected 4-D array"
             assert "spacing" in props
