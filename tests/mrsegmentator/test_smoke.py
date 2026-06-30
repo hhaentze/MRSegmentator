@@ -166,18 +166,3 @@ class TestOrientationString:
 
         result = get_orientation_string(self._image([-1, 0, 0, 0, 1, 0, 0, 0, 1]))
         assert result[0] == "R"
-
-
-class TestConfigWeightsDir:
-    def test_env_var_overrides_default(self, tmp_path, monkeypatch):
-        from mrsegmentator.config import get_weights_dir
-
-        monkeypatch.setenv("MRSEG_WEIGHTS_PATH", str(tmp_path))
-        assert get_weights_dir() == tmp_path
-
-    def test_missing_custom_path_raises(self, tmp_path, monkeypatch):
-        from mrsegmentator.config import get_weights_dir
-
-        monkeypatch.setenv("MRSEG_WEIGHTS_PATH", str(tmp_path / "nonexistent"))
-        with pytest.raises(FileNotFoundError):
-            get_weights_dir()

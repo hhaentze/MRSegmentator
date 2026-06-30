@@ -10,13 +10,6 @@
 
 from pathlib import Path
 
-# Directory that contains the nnUNet_results/ subfolder (main model weights).
-MODEL_PATH = Path("/path/to/weights")
-
-# Optional: path to body-composition model weights (future --body-comp flag).
-# Leave as None to skip body-comp tests.
-BODY_COMP_MODEL_PATH = None
-
 # One or more real MRI/CT files (.nii, .nii.gz, .mha, or .nrrd).
 # All images are passed to a single infer() call, so inference is initialised
 # only once regardless of list length.  Add more files for broader coverage;
