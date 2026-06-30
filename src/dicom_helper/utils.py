@@ -4,7 +4,6 @@
 
 import logging
 import os
-from abc import ABC
 
 import numpy as np
 import pydicom
@@ -45,7 +44,7 @@ def validate_nifti_file(nifti_path):
         img = sitk.ReadImage(nifti_path)
         return img
     except Exception as e:
-        raise ValueError(f"Cannot read NIfTI file {nifti_path}: {e}")
+        raise ValueError(f"Cannot read NIfTI file {nifti_path}: {e}") from e
 
 
 def validate_dtype(dtype_str):
@@ -55,8 +54,8 @@ def validate_dtype(dtype_str):
         if not np.issubdtype(dtype, np.integer):
             raise ValueError(f"Only integer dtypes supported, got {dtype_str}")
         return dtype
-    except AttributeError:
-        raise ValueError(f"Invalid dtype: {dtype_str}")
+    except AttributeError as e:
+        raise ValueError(f"Invalid dtype: {dtype_str}") from e
 
 
 def verify_geometry_match(seg_img, ref_img, tolerance=1e-3):
@@ -100,7 +99,7 @@ def has_dicom_file(directory_path):
     return False
 
 
-class Color(ABC):
+class Color:
     """Cielab Color Helper"""
 
     @staticmethod

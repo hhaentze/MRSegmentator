@@ -86,8 +86,8 @@ class SimpleITKIO:
                 "direction": direction,
                 "orientation": orientation,
             },
-            # the spacing is inverted with [::-1] because sitk returns the spacing in the wrong order lol. Image arrays
-            # are returned x,y,z but spacing is returned z,y,x. Duh.
+            # the spacing is inverted with [::-1] because sitk returns the spacing in the wrong
+            # order. Image arrays are returned x,y,z but spacing is returned z,y,x.
             "spacing": list(spacing_itk)[::-1],
         }
 
@@ -107,7 +107,8 @@ class SimpleITKIO:
     ) -> None:
 
         assert seg.ndim == 3, (
-            "segmentation must be 3d. If you are exporting a 2d segmentation, please provide it as shape 1,x,y"
+            "segmentation must be 3d. If you are exporting a 2d segmentation,"
+            " please provide it as shape 1,x,y"
         )
         log(verbose, f"Write {output_fname}")
 

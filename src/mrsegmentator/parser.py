@@ -98,7 +98,8 @@ def initialize() -> argparse.Namespace:
         "--batchsize",
         type=int,
         default=8,
-        help="how many images can be loaded to memory at the same time, ideally this should equal the dataset size",
+        help="how many images can be loaded to memory at the same time,"
+        " ideally this should equal the dataset size",
     )
     parser.add_argument(
         "--nproc",

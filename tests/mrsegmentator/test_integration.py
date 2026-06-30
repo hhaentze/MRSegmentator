@@ -16,7 +16,6 @@ Run:
 """
 
 import sys
-import time
 from pathlib import Path
 from typing import List, Tuple
 
@@ -59,7 +58,7 @@ FIGURES_DIR = Path("reports/figures")
 
 def _read_labels(path: Path):
     arr = sitk.GetArrayFromImage(sitk.ReadImage(str(path)))
-    return set(int(v) for v in np.unique(arr))
+    return {int(v) for v in np.unique(arr)}
 
 
 def _spacing(path: Path):
@@ -75,11 +74,7 @@ def _run_infer(images: List[Path], model_name: str, tmp_path_factory) -> List[Tu
 
     outdir = tmp_path_factory.mktemp("seg")
 
-    t0 = time.monotonic()
-    try:
-        infer([str(i) for i in images], outdir=str(outdir), fast=True, model_name=model_name)
-    finally:
-        elapsed = time.monotonic() - t0
+    infer([str(i) for i in images], outdir=str(outdir), fast=True, model_name=model_name)
 
     return [(img, outdir / add_postfix(img.name, "seg")) for img in images]
 

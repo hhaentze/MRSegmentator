@@ -12,7 +12,6 @@ Run with:
 """
 
 import argparse
-import os
 
 import numpy as np
 import pytest
@@ -105,15 +104,15 @@ class TestSplitAndStitch:
 
 class TestParserValidation:
     def _ns(self, tmp_path, **overrides):
-        defaults = dict(
-            input=str(tmp_path),
-            outdir=str(tmp_path / "out"),
-            batchsize=8,
-            nproc=3,
-            nproc_export=8,
-            split_level=0,
-            split_margin=3,
-        )
+        defaults = {
+            "input": str(tmp_path),
+            "outdir": str(tmp_path / "out"),
+            "batchsize": 8,
+            "nproc": 3,
+            "nproc_export": 8,
+            "split_level": 0,
+            "split_margin": 3,
+        }
         defaults.update(overrides)
         return argparse.Namespace(**defaults)
 

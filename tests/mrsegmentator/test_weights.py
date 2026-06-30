@@ -1,4 +1,5 @@
 import json
+import os
 
 import pytest
 
@@ -198,7 +199,6 @@ class TestSetupMrseg:
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
-import os
 
 
 def _set_and_return(config_module, root):

@@ -76,7 +76,7 @@ def dicom_to_nifti(dicom_dir, output_dir=None, series_id=None, output_name="imag
     try:
         image = reader.Execute()
     except Exception as e:
-        raise RuntimeError(f"Failed to read DICOM series: {e}")
+        raise RuntimeError(f"Failed to read DICOM series: {e}") from e
 
     # Ensure consistent orientation - SimpleITK handles LPS internally
     output_file = os.path.join(output_dir, output_name)
@@ -129,7 +129,8 @@ def nifti_to_dicom_slices(nifti_path, template_dir, output_dir, dtype="uint8", m
     else:
         if len(foreground_labels) > 1:
             logger.info(
-                f"Converting multiclass segmentation to binary (combining labels {foreground_labels})"
+                "Converting multiclass segmentation to binary"
+                f"(combining labels {foreground_labels})"
             )
         # Convert to binary
         output_array = (seg_array > 0).astype(dtype)
@@ -343,4 +344,4 @@ def nifti_to_dicom_seg(nifti_path, template_dir, output_file, multiclass=True):
         logger.info(f"Saved DICOM SEG with {len(segment_descriptions)} segment(s) to {output_file}")
 
     except Exception as e:
-        raise RuntimeError(f"Failed to create DICOM SEG: {e}")
+        raise RuntimeError(f"Failed to create DICOM SEG: {e}") from e
