@@ -1,4 +1,4 @@
-<h2 align="center"> MRSegmentator: Multi-Modality Segmentation of 40 Classes in MRI and CT </h2> 
+<h2 align="center"> MRSegmentator: Multi-Modality Segmentation of 40+10 Classes in MRI and CT </h2> 
 
 ***
 
@@ -9,18 +9,16 @@
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </div>
 
-> Detect and segment 40 classes in MRI and CT of the abdominal / pelvic / thorax region
+> Detect and segment 40 classes in MRI and CT of the abdominal / pelvic / thorax region.
+> Now with 10 additional body composition classes in MRI
 
 
 Contrary to CT scans, where tools for automatic multi-structure segmentation are quite mature, segmentation tasks in MRI scans are often either focused on the brain region or on a subset of few organs in other body regions. MRSegmentator aims to extend this and accurately segment 40 organs and structures in human MRI scans of the abdominal, pelvic and thorax regions. The segmentation works well on different sequence types, including T1- and T2-weighted, Dixon sequences and even CT images. 
 
 
-### Updates (v1.3.0)
-- Our paper has been published! Read more about MRSegmentator in Radiology AI: https://doi.org/10.1148/ryai.240777
-- We support .mha and .nrrd files now
-- We support DICOM now: If a DICOM directory is used as input a corresponding DICOM SEG will be generated.
-
-Understand the model in depth by reading our [Evaluation](evaluation) section. 
+### Updates (v2.0.0)
+- We added 10 additional body composition classes, exclusively for MRI. You can segment them by setting `--body_comp`
+- You can accelerate segmentation with the `--fast` flag
  
 
 ![Sample Image](images/SampleSegmentation.png)
@@ -38,7 +36,7 @@ python -m pip install mrsegmentator
 If the installed pytorch version is not compatible to your system, you might need to install it manually. Please refer to [PyTorch](https://pytorch.org/get-started/locally/). MRSegmentator requires torch <= 2.3.1.
 
 ## Docker Image
-You can run an MRSegmentator Docker image directly from [MHub](https://mhub.ai/models/mrsegmentator).
+You can run an MRSegmentator (v1.2) Docker image directly from [MHub](https://mhub.ai/models/mrsegmentator).
 ```bash
 $input_dir=/path/to/input
 $output_dir=/path/to/output
@@ -48,10 +46,10 @@ docker run --rm -t --gpus all --network=none -v $input_dir:/app/data/input_data:
 
 
 ## Inference
-MRSegmentator segments all `.nii/.nii.gz/.mha/.nrrd` files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fold 0`.
+MRSegmentator segments all `.nii/.nii.gz/.mha/.nrrd` files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fast`.
 MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images. You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime. Read more about the options in the [Evaluation](evaluation) section. 
 
-**New**: You can now also run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
+You can now also run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
 
 ```bash
 mrsegmentator --input <file / directory / DICOM directory>
@@ -61,23 +59,24 @@ Options:
 ```bash
 -i, --input <str> [required] # input directory or file
 
---outdir <str>  # output directory
---fold <int> # use only a single model for inference 
---postfix <str> # postfix that will be added to segmentations, default: "seg"
---cpu_only # don't use a gpu
+-o --outdir <str>   # output directory
+--fast              # accelerate segmentation by disabling ensembling, mirroring, and by using a larget step size
+--postfix <str>     # postfix that will be added to segmentations, default: "seg"
+--cpu_only          # don't use a gpu
 
 # memory (mutually exclusive)
---batchsize <int> # number of images that can be loaded to memory at the same time, default: 8 
+--batchsize <int>   # number of images that can be loaded to memory at the same time, default: 8 
 --split_level <int> # split images to reduce memory usage. Images are split recursively: A split level of x will produce 2^x smaller images
 
 # debugging
 --log_level <["DEBUG", "INFO", "WARNING", "ERROR"]> # Default: INFO
---no_tqdm # disable tqdm progress bars
+--no_tqdm               # disable tqdm progress bars
 
 # experimental
---split_margin <int> # split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image, default: 3
---nproc <int> # number of processes
---nproc_export <int> # number of processes for exporting the segmentations
+--split_margin <int>    # split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image, default: 3
+--nproc <int>           # number of processes
+--nproc_export <int>    # number of processes for exporting the segmentations
+--fold <int>            # specify a single fold for segmentation
 ```
 
 ## Python API
@@ -88,22 +87,22 @@ import os
 outdir = "outputdir"
 images = [f.path for f in os.scandir("image_dir")]
 
-inference.infer(images, outdir)
+inference.infer(images, outdir, model_name="base")
 ```
 
-## Change Path to Weights
-MRSegmentator will automatically download its weights and save them in `.conda/envs/<name>/lib/python3.11/site-packages/mrsegmentator/weights`.
-This enables easy uninstallation including the weights, should you decide to clean your virtual environments.
+## Manage Weights
+Weights are automatically downloaded to `~/.mrsegmentator`. If you want to specify a custom weights directory you can do so by setting an environmental variable: `export MRSEG_WEIGHTS_PATH=<path>`.
 
-If you have multiple environments set the MRSEG_WEIGHTS_PATH variable to prevent downloading multiple copies. Alternatively you can save the weights in a set location on your machine. For this you need to:
-1. Download them from [releases](https://github.com/hhaentze/MRSegmentator/releases/tag/v1.2.0) or move them from your conda environment
-2. Unzip the files
-3. Set the variable "MRSEG_WEIGHTS_PATH" to your weights directory
-(e.g.; `export MRSEG_WEIGHTS_PATH="/home/user/weights`)
+You can also use MRSegmentator as an interface to run other nnunetv2 models by pointing the MRSEG_WEIGHTS_PATH variable directly to the nnunetv2 folder with the plans.json file. By doing so you have a nice inference interface with all the included pre-processing:
 
+ - force LPS orientation during loading
+ - support for various file types
+ - fast mode (--fast) and memory efficiency (--split_level 2)
 
 ## How To Cite
 If you use our work in your research, please cite our article: https://doi.org/10.1148/ryai.240777.
+
+If you use the body composition classes, please additionally cite this preprint: https://doi.org/10.1101/2025.06.03.25328867
 
 ## Class details
 
@@ -152,6 +151,24 @@ If you use our work in your research, please cite our article: https://doi.org/1
 | 38 | right_gluteus_medius |
 | 39 | left_gluteus_minimus |
 | 40 | right_gluteus_minimus |
+
+### Body Composition (Exclusively MRI)
+
+| Index | Class |
+| :--- | :--- |
+| 1 | subcutaneous_fat |
+| 2 | visceral_fat |
+| 3 | left_rectus_abdominis |
+| 4 | right_rectus_abdominis |
+| 5 | left_oblique_muscle |
+| 6 | right_oblique_muscle |
+| 7 | left_quadratus_lumborum |
+| 8 | right_quadratus_lumborum |
+| 9 | abdominal_subcutaneous_fat |
+| 10 | gluteofemoral_fat |
+
+
+
 
 
 ## Testing
