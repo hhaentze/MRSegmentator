@@ -33,6 +33,7 @@ def infer(
     split_margin: int = 3,
     allow_tqdm: bool = True,
     fast: bool = False,
+    model_name: str = "base",
 ) -> None:
     """Run model to create segmentations
     folds: which models to use for inference
@@ -45,7 +46,7 @@ def infer(
     """
 
     # initialize weights directory
-    config.setup_mrseg()
+    config.setup_mrseg(model_name)
 
     # make output directory
     Path(outdir).mkdir(exist_ok=True)
@@ -63,7 +64,7 @@ def infer(
 
     # initialize the network architecture, load the checkpoints
     predictor.initialize_from_trained_model_folder(
-        config.get_weights_dir(),
+        config.get_model_dir(model_name),
         use_folds=folds,
         checkpoint_name="checkpoint_final.pth",
     )
