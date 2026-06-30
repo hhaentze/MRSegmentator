@@ -1,4 +1,10 @@
-.PHONY: type format lint smoke full compatibility test clean
+.PHONY: install install-dev type format lint smoke full compatibility test clean
+
+install:
+	pip install -e .
+
+install-dev:
+	pip install -e ".[dev]"
 
 type:
 	mypy src --ignore-missing-imports --python-version=3.11 
