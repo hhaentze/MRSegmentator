@@ -38,6 +38,18 @@ def initialize() -> Any:
     parser.add_argument("--outdir", type=str, default="segmentations", help="output directory")
 
     parser.add_argument(
+        "--body_comp",
+        action="store_true",
+        help="Segment body composition: 10 classes exclusively for MRI",
+    )
+
+    parser.add_argument(
+        "--fast", action="store_true", help="use single fold with increased step size"
+    )
+
+    parser.add_argument("--postfix", type=str, default="seg", help="postfix")
+
+    parser.add_argument(
         "--fold",
         type=int,
         choices=range(5),
@@ -75,10 +87,6 @@ def initialize() -> Any:
         help="split images with an overlap of 2xmargin to avoid hard cutt-offs between segmentations of top and bottom image",  # noqa: E501
     )
 
-    parser.add_argument(
-        "--fast", action="store_true", help="use single fold with increased step size"
-    )
-    parser.add_argument("--postfix", type=str, default="seg", help="postfix")
     parser.add_argument("--cpu_only", action="store_true", help="don't use a gpu")
 
     parser.add_argument(

@@ -82,6 +82,7 @@ def main() -> None:
         namespace.split_margin,
         not namespace.no_tqdm,
         namespace.fast,
+        "base" if not namespace.body_comp else "body_comp",
     )
     end_time = time.time()
     time_delta = timedelta(seconds=round(end_time - start_time))
