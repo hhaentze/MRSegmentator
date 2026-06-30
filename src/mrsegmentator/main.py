@@ -2,22 +2,13 @@
 # Licensed under the Apache License, Version 2.0
 # http://www.apache.org/licenses/LICENSE-2.0
 
+
 import logging
 import time
 from datetime import timedelta
 from os.path import basename, join
 
-import torch
-
-from dicom_helper import utils as dcm_utils
-from dicom_helper.dicom_conversion import dicom_to_nifti as d2n
-from dicom_helper.dicom_conversion import nifti_to_dicom_seg as n2seg
-from mrsegmentator import config, parser, utils
-from mrsegmentator.custom_logger import setup_logging
-
-config.disable_nnunet_path_warnings()
-
-from mrsegmentator.inference import infer  # noqa: E402
+from mrsegmentator import parser
 
 
 def main() -> None:
@@ -26,6 +17,20 @@ def main() -> None:
     namespace = parser.initialize()
     parser.assert_namespace(namespace)
 
+    ################ load imports ####################
+    # this can take a few seconds. By doing this after parsing and some initial quality checks
+    # we can vastly accelerate user-interaction
+
+    import torch
+
+    from mrsegmentator import config, utils
+    from mrsegmentator.custom_logger import setup_logging
+
+    config.disable_nnunet_path_warnings()
+    from mrsegmentator.inference import infer  # noqa: E402
+
+    ###################################################
+
     setup_logging(level=namespace.log_level)
 
     try:
@@ -33,6 +38,10 @@ def main() -> None:
         IS_DICOM = False
 
     except FileNotFoundError as e:
+
+        from dicom_helper import utils as dcm_utils
+        from dicom_helper.dicom_conversion import dicom_to_nifti, nifti_to_dicom_seg
+
         logging.debug("No images found in input directory. Checking if input is a DICOM directory.")
         if dcm_utils.has_dicom_file(namespace.input):
             logging.info("DICOM found. Converting to NIfTI...")
@@ -40,7 +49,7 @@ def main() -> None:
             target_name = basename(namespace.input)
             if target_name == ".":
                 target_name = "dicom_input"
-            d2n(
+            dicom_to_nifti(
                 dicom_dir=namespace.input,
                 output_dir=namespace.outdir,
                 output_name=target_name + ".nii.gz",
@@ -90,7 +99,7 @@ def main() -> None:
 
     if IS_DICOM:
         logging.info("Converting segmentation to DICOM SEG")
-        n2seg(
+        nifti_to_dicom_seg(
             nifti_path=join(namespace.outdir, target_name + f"_{namespace.postfix}.nii.gz"),
             template_dir=namespace.input,
             output_file=join(namespace.outdir, target_name + f"_{namespace.postfix}.dcm"),
