@@ -1,5 +1,8 @@
 # notebooks
 notebooks
+.ipynb_checkpoints
+*.ipynb
+
 
 # data
 src/mrsegmentator/weights
@@ -11,6 +14,21 @@ data/
 *.dcm
 *.csv
 *.zip
+*.json
+*.yaml
+*.yml
+*.txt
+
+# misc
+docker
+autoseg3d
+gradio
+images
+scripts
+streamlit
+evaluation/workdir
+nnUNet_plans
+testdata
 
 # models
 models
@@ -116,9 +134,6 @@ docs/_build/
 
 # PyBuilder
 target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
 
 # pyenv
 .python-version
