@@ -1,0 +1,115 @@
+name: mrsegmentator-compatibility
+
+# Baseline: default values merged into every test entry.
+# Each test should override only what it varies.
+baseline:
+  python:   "3.11"
+  torch:    "2.5"
+  numpy:    "1.26"
+  nnunetv2: "2.6.0"
+
+tests:
+
+  # ── Python range ──────────────────────────────────────────────────────────
+  # One row per supported Python boundary, with a stack known to be compatible.
+  # These validate the python_requires = >=3.10, <3.13 claim in setup.cfg.
+  # py39 dropped: nnunetv2==2.2.1 pulls dicom2nifti→python-gdcm which fails
+  # to build from source (CMake error). Real-world failure, not a fluke.
+
+  - id: py310
+    python:   "3.10"
+    torch:    "2.3"
+    numpy:    "1.26"
+    nnunetv2: "2.4.0"
+
+  - id: py311          # == baseline
+    python:   "3.11"
+    torch:    "2.5"
+    numpy:    "1.26"
+    nnunetv2: "2.6.0"
+
+  - id: py312
+    python:   "3.12"
+    torch:    "2.6"
+    numpy:    "1.26"
+    nnunetv2: "2.8.0"
+
+  - id: py313         
+    python:   "3.13"
+    torch:    "2.10"
+    numpy:    "2.4.1"
+    nnunetv2: "2.8.0"
+
+  # ── torch range ───────────────────────────────────────────────────────────
+  # torch 2.9 is known-incompatible with nnunetv2; test 2.8 (below) and
+  # 2.10 (above) to validate both sides of that gap.
+
+  - id: torch28
+    python:   "3.11"
+    torch:    "2.8"
+    numpy:    "1.26"
+    nnunetv2: "2.8.0"
+
+  - id: torch210
+    python:   "3.12"
+    torch:    "2.10"
+    numpy:    "1.26"
+    nnunetv2: "2.8.0"
+
+  # ── numpy 2.x ─────────────────────────────────────────────────────────────
+  # numpy 2.0 is a breaking change; only test it with modern stacks where
+  # torch and nnunetv2 are known to support it.
+
+  - id: numpy20_nn280
+    python:   "3.11"
+    torch:    "2.6"
+    numpy:    "2.0"
+    nnunetv2: "2.8.0"
+
+  - id: numpy20_nn260   # does nn2.6.0 also handle numpy 2.x?
+    python:   "3.11"
+    torch:    "2.6"
+    numpy:    "2.0"
+    nnunetv2: "2.6.0"
+
+  - id: numpy241
+    python:   "3.12"
+    torch:    "2.6"
+    numpy:    "2.4.1"
+    nnunetv2: "2.8.0"
+
+  # ── nnunetv2 range ─────────────────────────────────────────────────────────
+
+  - id: nn_min          # lowest testable nnunetv2; py39 dropped due to python-gdcm build failure
+    python:   "3.10"
+    torch:    "2.3"
+    numpy:    "1.26"
+    nnunetv2: "2.2.1"
+
+  - id: nn260           # mid-range version, only appears as baseline otherwise
+    python:   "3.11"
+    torch:    "2.5"
+    numpy:    "1.26"
+    nnunetv2: "2.6.0"
+
+  - id: nn240_py311     # nn2.4.0 currently only tested on py310; confirm py311 too
+    python:   "3.11"
+    torch:    "2.5"
+    numpy:    "1.26"
+    nnunetv2: "2.4.0"
+
+  - id: nn_max          # upper bound; same stack as py312
+    python:   "3.12"
+    torch:    "2.6"
+    numpy:    "1.26"
+    nnunetv2: "2.8.0"
+
+  # ── torch mid-range ────────────────────────────────────────────────────────
+  # py310 currently only tested with torch2.3; torch2.4 was a significant
+  # release and fills a gap in the middle of the supported range.
+
+  - id: py310_torch24
+    python:   "3.10"
+    torch:    "2.4"
+    numpy:    "1.26"
+    nnunetv2: "2.6.0"
