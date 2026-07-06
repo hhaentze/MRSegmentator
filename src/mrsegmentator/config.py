@@ -27,9 +27,9 @@ MODEL_REGISTRY: Dict[str, Dict[str, Any]] = {
     },
     "body_comp": {
         "version": 1.0,
-        "url": None,  # TODO: fill when secondary weights are published
+        "url": "https://zenodo.org/records/21211879/files/body_comp_weights.zip?download=1",
         "sha256": "3ec490f641dd1aebdd4d2f497e69f8c9f2e4060a45c7d0d69c3ea0e74daf1550",
-        "zip_name": "mrsegmentator_secondary_weights.zip",
+        "zip_name": "mrsegmentator_bodycomp_weights.zip",
     },
 }
 

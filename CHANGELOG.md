@@ -1,6 +1,22 @@
 # Changelog
 
 <!--next-version-placeholder-->
+
+
+## v2.0.0 (06/07/2027)
+
+### Feature
+- 10 additional classes for body composition in MRI
+- weights management supports muliple weights
+- dedicatated weights directory as ~/.mrsegmentator
+- env variable MRSEG_WEIGHTS_PATH allows to link to a custom weights dir
+- if MRSEG_WEIGHTS_PATH points to any nnUNet results direcotry, these weights can be loaded as well
+- More CI tests, with full integration workflows
+- More GitHub action workflows
+- Updated supported python versions to 3.10-3-13. (3.9 is not working)
+- Added fast inference mode with `--fast`
+
+
 ## v1.3.2 (26/05/2026)
 
 ### Fix
