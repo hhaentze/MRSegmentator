@@ -60,6 +60,7 @@ Options:
 -i, --input <str> [required] # input directory or file
 
 -o --outdir <str>   # output directory
+--body_comp         # segment 10 body composition classes in MRI
 --fast              # accelerate segmentation by disabling ensembling, mirroring, and by using a larget step size
 --postfix <str>     # postfix that will be added to segmentations, default: "seg"
 --cpu_only          # don't use a gpu
