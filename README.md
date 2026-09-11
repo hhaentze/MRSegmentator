@@ -7,6 +7,8 @@
 <a href="https://github.com/hhaentze/MRSegmentator/blob/master/License.txt"><img alt="License: Apache" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"></a>  
 <a href="https://pypi.org/project/mrsegmentator/"><img alt="PyPI" src="https://img.shields.io/pypi/v/mrsegmentator"></a>  
 <a href="https://github.com/astral-sh/ruff"><img alt="Code style: ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
+<a href="https://pubs.rsna.org/doi/abs/10.1148/ryai.240777"><img alt="Main Paper" src="https://img.shields.io/badge/Main_Paper-Rad_AI-b31b1b"></a>
+<a href="https://www.nature.com/articles/s43856-026-01888-w"><img alt="Body Composition Paper" src="https://img.shields.io/badge/Body_Comp_Paper-Comm_Med-darkblue.svg"></a>
 </div>
 
 > Detect and segment 40 classes in MRI and CT of the abdominal / pelvic / thorax region.
@@ -33,7 +35,7 @@ conda activate mrseg
 # Install MRSegmentator
 python -m pip install mrsegmentator
 ```
-If the installed pytorch version is not compatible to your system, you might need to install it manually. Please refer to [PyTorch](https://pytorch.org/get-started/locally/). MRSegmentator requires torch <= 2.3.1.
+If the installed pytorch version is not compatible to your system, you might need to install it manually. Please refer to [PyTorch](https://pytorch.org/get-started/locally/). 
 
 ## Docker Image
 You can run an MRSegmentator (v1.2) Docker image directly from [MHub](https://mhub.ai/models/mrsegmentator).
@@ -49,7 +51,7 @@ docker run --rm -t --gpus all --network=none -v $input_dir:/app/data/input_data:
 MRSegmentator segments all `.nii/.nii.gz/.mha/.nrrd` files in an input directory and writes segmentations to the specified output directory. To speed up segmentation you can increase the `--batchsize` or select a single model for inference with `--fast`.
 MRSegmentator requires a lot of memory and can run into OutOfMemory exceptions when used on very large images. You can reduce memory usage by setting ```--split_level``` to 1 or 2. Be aware that this increases runtime. Read more about the options in the [Evaluation](evaluation) section. 
 
-You can now also run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
+You can run MRSegmentator on DICOM directories, in which case it produces a  DICOM SEG. (Make sure that there is only a single series UID in the directory). You can also convert previously created segmentations back to DICOM SEG (see [dcm_helper](DCM_Helper_README.md)).
 
 ```bash
 mrsegmentator --input <file / directory / DICOM directory>
@@ -101,9 +103,9 @@ You can also use MRSegmentator as an interface to run other nnunetv2 models by p
  - fast mode (--fast) and memory efficiency (--split_level 2)
 
 ## How To Cite
-If you use our work in your research, please cite our article: https://doi.org/10.1148/ryai.240777.
+If you use our work in your research, please cite our article: https://pubs.rsna.org/doi/abs/10.1148/ryai.240777.
 
-If you use the body composition classes, please additionally cite this preprint: https://doi.org/10.1101/2025.06.03.25328867
+If you use the body composition classes, please additionally cite: https://www.nature.com/articles/s43856-026-01888-w.
 
 ## Class details
 
